@@ -1,11 +1,11 @@
 PATH
-  remote: ~/.rvm/gems/ruby-1.9.3-p194@rails3.2/gems/arm_fftw-0.0.1/
+  remote: ~/.rvm/gems/ruby-1.9.3-p362/gems/arm_fftw-0.0.1/
   specs:
     arm_fftw (0.0.1)
       narray
 
 PATH
-  remote: ~/.rvm/gems/ruby-1.9.3-p194@rails3.2/gems/pv_adc-0.0.1/
+  remote: ~/.rvm/gems/ruby-1.9.3-p362/gems/pv_adc-0.0.1/
   specs:
     pv_adc (0.0.1)
 
