@@ -4,6 +4,12 @@ class EmSinatraApp < Sinatra::Base
 
 	q = EM::Queue.new
 
+	work = lambda do |item|
+		puts item
+		EM.next_tick { q.pop(&work) }
+		[1, 2]
+	end
+
 	aget "/" do
 		body "Eventmachin with Sinatra\n"
  	end
@@ -16,23 +22,25 @@ class EmSinatraApp < Sinatra::Base
 		end
 	end
 
-	op = Proc.new do
-	  sleep(2) 
-		[1, 2]
+  EM.next_tick do
+	  op = Proc.new do
+      sleep(2) 
+      [1, 2]
+      # q.pop(&work)
+	  end
+
+    cb = Proc.new do |first, second| 
+		  puts "CALLBACK #{first} #{second}"
+      q.pop do
+  	    EM.defer(op, cb) 
+  	  end
+	  end
+
+	  EM.defer(op, cb) 
 	end
 
-  cb = Proc.new do |first, second| 
-		puts "CALLBACK #{first} #{second}"
-	end
 
-	EM.defer(op, cb) 
-
-
-	work = lambda do |item|
-		puts item
-		EM.next_tick { q.pop(&work) }
-	end
 	
-	q.pop(&work)
+  # q.pop(&work)
 
 end
