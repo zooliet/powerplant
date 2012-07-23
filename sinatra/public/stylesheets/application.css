@@ -1,0 +1,22 @@
+body {
+	width: 80%;
+	margin: 10px auto;
+	background-color: #f2f2f2;
+	border: 1px solid #e0e0e0;
+}
+
+div.main {
+	min-height: 300px;
+	padding: 10px;
+}
+
+div.footer {
+	position: absolute;
+	bottom: 0px;
+	width: 80%;
+	height: 24px;
+	padding-top: 5px;
+	color: green;
+	text-align: center;
+	background-color: #e0e0e0;
+}
