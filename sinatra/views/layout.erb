@@ -1,16 +1,19 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" http://www.w3.org/TR/html4/strict.dtd">
 <html>
   <head>
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-    <link rel="stylesheet" href="/stylesheets/app.css" type="text/css" media="screen" charset="utf-8">
+    <meta http-equiv="Content-type" content="text/html;
+charset=utf-8">
+    <link rel="stylesheet" href="/stylesheets/application.css" type="text/css" media="screen" charset="utf-8">
     <script src="/javascript/jquery-1.7.2.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/javascript/app.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/application.js" type="text/javascript" charset="utf-8"></script>
     
-    <title>Shortener</title>
+    <title>Sinatra App</title>
   </head>
   
   <body>
-    <%= yield %>
-    
+		<div class="main">
+	    <%= yield %>    
+		</div>
+		<div class="footer"><%= Time.now %></div>
   </body>
 </html>

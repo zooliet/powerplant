@@ -1,14 +1,24 @@
+
 class SinatraApp < Sinatra::Base
 	get "/" do
-		"Hello, Time is #{Time.now}"
+		erb :test
 	end
 	
-	get "/start" do
-	  erb :start
+	get "/test" do
+	  erb :test
 	end
 	
-	get '/coffee.js' do
-	  content_type "text/javascript"
+	get "/application.js" do
 	  coffee :coffee
-	end
+  end
+
+	get "/coffee_test.js" do
+	  content_type "text/javascript"
+	  coffee :coffee_test
+  end
+
+	get "/json_test.json" do
+	  content_type :json
+    { :key => 'value', :key2 => 'value2' }.to_json
+  end
 end
