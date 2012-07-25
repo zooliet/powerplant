@@ -1,3 +1,4 @@
+require 'csv'
 class Beagle < Thor 
 	include Thor::Actions
 
@@ -12,6 +13,20 @@ class Beagle < Thor
 		inside "." do
 			run "ls -al", {:verbose => false}
     end
+  end
+
+  desc "setup FREQ --sampling SAMPLE_FREQ", "thor signal generator"
+  method_option :sampling, :type => :numeric, :default => 8000
+  def setup(freq = 1000)
+    f = freq.to_i
+    fs = options[:sampling].to_i
+    CSV.open("./adc.csv", "wb") do |csv|
+      2.times do
+        data = (0...1024).map {|n| (2+rand(3)) * Math.sin(2*Math::PI*f.to_i*(n/fs.to_f)).round(2)}
+        csv << data
+      end
+    end
+    
   end
 
 	desc "sinatra", "run basic sinatra"
@@ -41,5 +56,13 @@ class Beagle < Thor
 			run "rackup --port #{port}", {:verbose => false}
 		end
 	end
+
+	desc "main", "run main"
+	def main(port = 3000)
+		inside "main" do
+			run "rackup --port #{port}", {:verbose => false}
+		end
+	end
+
 end
 

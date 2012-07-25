@@ -1,0 +1,1 @@
+$("div.box").append("<p>coffee response</p>")
