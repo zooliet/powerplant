@@ -10,15 +10,23 @@ class EmSinatraApp < Sinatra::Base
 		[1, 2]
 	end
 
+  before do 
+    puts "Before"
+  end
+  
+  after do
+    puts "After"
+  end
+
 	aget "/" do
-		body "Eventmachin with Sinatra\n"
+    body "<h2>Eventmachin with Sinatra</h2>"
  	end
 
 	aget "/delay/:n" do |n|
-		puts "Starts..."
+		puts "Starts: #{params[:n]}"
 		EM.add_timer(n.to_i) do
 			q.push(n)
-			body "delayed #{n} seconds.\n"
+  		body "<h2>delayed: #{n} seconds</h2>"
 		end
 	end
 

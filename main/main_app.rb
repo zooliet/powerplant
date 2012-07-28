@@ -2,12 +2,35 @@
 class MainApp < Sinatra::Base
 	register Sinatra::Async
 
+  configure :production do
+    puts "Production configuration goes here..."
+  end
+
+  sampling = lambda { puts "Get sampled data" }
+  fft      = lambda { |data| puts "Perform FFT" }
+
   get "/" do
     erb :index
   end
 	
-	get "/test" do
-	  erb :test
+	aget "/start.js" do
+	  if $timer
+	    puts "Skip timer"
+	  else
+      $timer = EM.add_periodic_timer(2) do 
+        puts Time.now
+        EM.defer(sampling, fft)
+        content_type "text/javascript"
+        body "console.log('test.js')"
+      end
+      puts "Timer stared: #{$timer}"                
+    end
+	end
+	
+	aget "/stop.js" do
+	  EM.cancel_timer($timer)
+    puts "Timer stoped: #{$timer}"
+	  $timer = nil
 	end
 
   get "/application.js" do
@@ -15,7 +38,7 @@ class MainApp < Sinatra::Base
     coffee :coffee
   end
 
-  get "/start/:interval/:type.json" do
+  get "/test/:interval/:type.json" do
     Storage.fft    
     data = { 
       :previous => Storage::previous, :current  => Storage::current, 

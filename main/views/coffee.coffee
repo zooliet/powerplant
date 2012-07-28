@@ -178,15 +178,25 @@ jQuery ->
 
 	$('div#controls ul.buttons li').live "click", ->
 		url = $(@).data('ref')
-		$.ajax
-			type: 'GET',
-			dataType: 'json',
-			url: "#{url}.json"
-			success: (result) ->
-				for k,v of result
-					console.log(k + " is " + v)
-				if result.type == "normal"
-					plot.start(result.previous, result.current, result.interval).replot()
-				else
-					plot.diff(result.previous, result.current, result.interval).replot()
+		if url == '/start' or url == '/stop'
+			url = "#{url}.js"
+			type = 'script'
+			$.ajax
+				type: 'GET'
+				dataType: type
+				url: url			
+		else
+			url = "#{url}.json"
+			type = 'json'
+			$.ajax
+				type: 'GET'
+				dataType: type
+				url: url
+				success: (result) ->
+					for k,v of result
+						console.log(k + " is " + v)
+					if result.type == "normal"
+						plot.start(result.previous, result.current, result.interval).replot()
+					else
+						plot.diff(result.previous, result.current, result.interval).replot()
 	
