@@ -21,6 +21,8 @@ jQuery ->
 				for k,v of result
 					$('div.box').append("<p>#{k} is #{v}</p>")
 					# console.log(k + " is " + v)
+########################################################################################					
+
 
 ########################################################################################					
 
@@ -175,6 +177,26 @@ jQuery ->
 	plot.start()
 
 ########################################################################################
+
+	ws = new WebSocket("ws://localhost:8080/")
+	
+	ws.onmessage = (evt) ->
+		result = $.parseJSON(evt.data)  #JSON.stringify(evt.data)
+		console.log(result)
+		# for k,v of result
+		# 	console.log(k + " is " + v)
+		
+		# result = evt.data
+		plot.start(result.previous, result.current, 4).replot()
+		
+	ws.onclose = ->
+		# alert("Socket closed")
+
+	ws.onopen = ->
+		# alert("Connected...")
+		# ws.send("Hello Server")
+
+########################################################################################					
 
 	$('div#controls ul.buttons li').live "click", ->
 		url = $(@).data('ref')

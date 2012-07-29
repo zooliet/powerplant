@@ -14,3 +14,5 @@ gem 'coffee-script'
 gem 'json'
 
 gem 'em-redis'
+gem 'em-websocket'
+#gem 'websocket-rack', :require => 'rack/websocket'

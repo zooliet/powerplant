@@ -9,6 +9,9 @@ class MainApp < Sinatra::Base
   sampling = lambda { puts "Get sampled data" }
   fft      = lambda { |data| puts "Perform FFT" }
 
+
+
+
   get "/" do
     erb :index
   end
@@ -47,7 +50,6 @@ class MainApp < Sinatra::Base
     content_type :json
     data.to_json
   end
-
 
   # get "/coffee_test.js" do
   #   content_type "text/javascript"
