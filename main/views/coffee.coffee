@@ -27,10 +27,13 @@ jQuery ->
 ########################################################################################					
 
 	plot =
-		previous: 
-			[].push(0) for i in [0...128]
-
 		current: 
+			[].push(50) for i in [0...128]		
+		average: 
+			[].push(50) for i in [0...128]
+		max: 
+			[].push(100) for i in [0...128]		
+		min: 
 			[].push(0) for i in [0...128]		
 
 		picks: (bins, interval) ->
@@ -101,14 +104,25 @@ jQuery ->
 				cursor:
 					show: true
 				
-		start: (previous=@previous, current=@current, interval=2) ->
-			previous_ret = @.picks(previous, interval)			
+		start: (current=@current, average=@average, max=@max, min=@min, interval=2) ->
+			# previous_ret = @.picks(previous, interval)			
 			current_ret  = @.picks(current, interval)			
+			average_ret  = @.picks(average, interval)			
+			max_ret  		 = @.picks(max, interval)			
+			min_ret  		 = @.picks(min, interval)			
 						
-			$.jqplot 'graph', [previous_ret, current_ret],
-				seriesColors: ["rgba(78, 135, 194, 0.7)", "rgb(211, 235, 59)"] # seriesColors: [ "#c5b47f"]
+			$.jqplot 'graph', [current_ret, average_ret, max_ret, min_ret],
+				seriesColors: ["rgba(78, 135, 194, 0.7)", "rgb(211, 235, 59)", "rgb(192,0,0)", "rgb(0,0,192)"] # seriesColors: [ "#c5b47f"]
 				title: "Acoustic Spectrum"
-				series: [{fill: true}, {}]
+				# series: [{fill: true}, {}]
+				fillBetween: {
+					series1: 2
+					series2: 3
+					color: "rgba(227, 167, 111, 0.7)"
+					baseSeries: 0,
+					fill: true
+				}
+        
 				seriesDefaults: 
 					showMarker: false
 					# pointLabels:{ 
@@ -131,8 +145,8 @@ jQuery ->
 					xaxis:
 						# min: 1
 						# max: previous_ret.length
-						min: previous_ret[0][0]
-						max: previous_ret[previous_ret.length-1][0]
+						min: current_ret[0][0]
+						max: current_ret[current_ret.length-1][0]
 						# numberTicks: 12
 						# tickInterval: 8
 						tickOptions: 
@@ -188,7 +202,7 @@ jQuery ->
 		# 	console.log(k + " is " + v)
 		
 		# result = evt.data
-		plot.start(result.previous, result.current, 4).replot()
+		plot.start(result.current, result.average, result.max, result.min, 4).replot()
 		
 	ws.onclose = ->
 		# alert("Socket closed")
@@ -219,7 +233,7 @@ jQuery ->
 					for k,v of result
 						console.log(k + " is " + v)
 					if result.type == "normal"
-						plot.start(result.previous, result.current, result.interval).replot()
+						plot.start(result.current, result.average, result.max, result.min, result.interval).replot()
 					else
-						plot.diff(result.previous, result.current, result.interval).replot()
+						plot.diff(result.average, result.current, result.interval).replot()
 	

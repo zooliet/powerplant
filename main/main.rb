@@ -16,7 +16,18 @@ EventMachine.run do     # <-- Changed EM to EventMachine
     end
 
     sampling = lambda { puts "Get sampled data" }
-    fft      = lambda { |data| puts "Perform FFT"; Storage.fft }
+    fft      = lambda do |data| 
+      puts "Perform FFT"; 
+      Storage.fft       
+      data = { 
+        # :previous => Storage::previous, 
+        :current  => Storage::current,
+        :average  => Storage::average,
+        :max      => Storage::max, 
+        :min      => Storage::min         
+      }
+      $ws.send(data.to_json)      
+    end
     
     get "/" do
       @host_ip = local_ip 
@@ -24,20 +35,21 @@ EventMachine.run do     # <-- Changed EM to EventMachine
     end
 
   	aget "/start.js" do
-      # if $timer
-      #   puts "Skip timer"
-      # else
-      $timer = EM.add_periodic_timer(5) do 
-        puts Time.now
-        EM.defer(sampling, fft)
-        data = { :previous => Storage::previous, :current  => Storage::current }
-        $ws.send(data.to_json)
+      if $timer
+        puts "Skip timer"
+      else
+        Storage.reset
+        $timer = EM.add_periodic_timer(5) do 
+          puts Time.now
+          EM.defer(sampling, fft)
+          # data = { :previous => Storage::previous, :current  => Storage::current }
+          # $ws.send(data.to_json)
 
-        content_type "text/javascript"
-        body "console.log('test.js')"
+          content_type "text/javascript"
+          body "console.log('test.js')"
+        end
+        puts "Timer stared: #{$timer}"                
       end
-      puts "Timer stared: #{$timer}"                
-      # end
     end
 
   	aget "/stop.js" do
@@ -52,10 +64,16 @@ EventMachine.run do     # <-- Changed EM to EventMachine
     end
 
     get "/test/:interval/:type.json" do
+      Storage.reset
       Storage.fft    
       data = { 
-        :previous => Storage::previous, :current  => Storage::current, 
-        :interval => params[:interval], :type => params[:type]
+        # :previous => Storage::previous, 
+        :current  => Storage::current, 
+        :average  => Storage::average, 
+        :max      => Storage::max, 
+        :min      => Storage::min, 
+        :interval => params[:interval], 
+        :type => params[:type]
       }
       content_type :json
       data.to_json
