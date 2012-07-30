@@ -16,7 +16,7 @@ EventMachine.run do     # <-- Changed EM to EventMachine
     end
 
     sampling = lambda { puts "Get sampled data" }
-    fft      = lambda { |data| puts "Perform FFT" }
+    fft      = lambda { |data| puts "Perform FFT"; Storage.fft }
     
     get "/" do
       @host_ip = local_ip 
@@ -27,7 +27,7 @@ EventMachine.run do     # <-- Changed EM to EventMachine
       # if $timer
       #   puts "Skip timer"
       # else
-      $timer = EM.add_timer(5) do 
+      $timer = EM.add_periodic_timer(5) do 
         puts Time.now
         EM.defer(sampling, fft)
         data = { :previous => Storage::previous, :current  => Storage::current }

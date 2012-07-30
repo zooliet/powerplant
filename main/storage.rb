@@ -20,7 +20,7 @@ class Storage
 
     #  do some work here with those sampling data
     Storage::previous = Storage::FFT_SIZE.times.map { 30 + rand(30) }
-    Storage::current  = Storage::FFT_SIZE.times.map { 30 + rand(30) }    
+    Storage::current  = Storage::FFT_SIZE.times.map { 35 + rand(30) }    
   end
   
   def self.sampling
