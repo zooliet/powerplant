@@ -19,7 +19,7 @@ EventMachine.run do     # <-- Changed EM to EventMachine
     fft      = lambda { |data| puts "Perform FFT" }
     
     get "/" do
-      @host_ip = IPSocket.getaddress(Socket.gethostname)      
+      @host_ip = local_ip 
       erb :index
     end
 
@@ -60,6 +60,19 @@ EventMachine.run do     # <-- Changed EM to EventMachine
       content_type :json
       data.to_json
     end  	
+    
+    private
+    def local_ip
+      orig, Socket.do_not_reverse_lookup = Socket.do_not_reverse_lookup, true
+      UDPSocket.open do |s|
+        s.connect '64.233.187.99', 1
+        s.addr.last
+      end
+    ensure
+      Socket.do_not_reverse_lookup = orig
+    end
+    
+    
   end
   
   EventMachine::WebSocket.start(:host => '0.0.0.0', :port => 8080) do |ws| # <-- Added |ws|
