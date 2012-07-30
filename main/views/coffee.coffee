@@ -178,7 +178,8 @@ jQuery ->
 
 ########################################################################################
 
-	ws = new WebSocket("ws://localhost:8080/")
+	hostip = $('div#hostip').data('hostip')
+	ws = new WebSocket("ws://#{hostip}:8080/")
 	
 	ws.onmessage = (evt) ->
 		result = $.parseJSON(evt.data)  #JSON.stringify(evt.data)

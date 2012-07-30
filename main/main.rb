@@ -1,6 +1,9 @@
 require 'bundler'
 Bundler.require
+require 'socket'
+
 require 'coffee-script'
+require 'json'
 
 require './storage.rb'
 
@@ -16,6 +19,7 @@ EventMachine.run do     # <-- Changed EM to EventMachine
     fft      = lambda { |data| puts "Perform FFT" }
     
     get "/" do
+      @host_ip = IPSocket.getaddress(Socket.gethostname)      
       erb :index
     end
 
@@ -27,7 +31,7 @@ EventMachine.run do     # <-- Changed EM to EventMachine
         puts Time.now
         EM.defer(sampling, fft)
         data = { :previous => Storage::previous, :current  => Storage::current }
-        $ws.send data.to_json
+        $ws.send(data.to_json)
 
         content_type "text/javascript"
         body "console.log('test.js')"
@@ -60,6 +64,7 @@ EventMachine.run do     # <-- Changed EM to EventMachine
   
   EventMachine::WebSocket.start(:host => '0.0.0.0', :port => 8080) do |ws| # <-- Added |ws|
     ws.onopen do
+      puts "Connection created"
       $ws = ws
       # ws.send "connected!!!!"
       # @@timer = EM.add_periodic_timer(5) do
