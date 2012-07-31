@@ -59,7 +59,7 @@ jQuery ->
 				diff_ret.push([i, value])
 
 			$.jqplot 'graph', [diff_ret],
-				title: "Ultra-Acoustic Band Spectrum Analysis"
+				title: "Ultra-Acoustic Spectrum"
 				# animate: true
 				# animateReplot: true
 				seriesDefaults:
@@ -113,7 +113,7 @@ jQuery ->
 						
 			$.jqplot 'graph', [current_ret, average_ret, max_ret, min_ret],
 				seriesColors: ["rgba(78, 135, 194, 0.7)", "rgb(211, 235, 59)", "rgb(192,0,0)", "rgb(0,0,192)"] # seriesColors: [ "#c5b47f"]
-				title: "Ultra-Acoustic Band Spectrum Analysis"
+				title: "Ultra-Acoustic Spectrum"
 				# series: [{fill: true}, {}]
 				fillBetween: {
 					series1: 2
