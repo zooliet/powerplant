@@ -20,7 +20,7 @@ EventMachine.run do     # <-- Changed EM to EventMachine
       puts "Perform FFT"; 
       Storage.fft       
       data = { 
-        # :previous => Storage::previous, 
+        :previous => Storage::previous, 
         :current  => Storage::current,
         :average  => Storage::average,
         :max      => Storage::max, 
@@ -67,7 +67,7 @@ EventMachine.run do     # <-- Changed EM to EventMachine
       Storage.reset
       Storage.fft    
       data = { 
-        # :previous => Storage::previous, 
+        :previous => Storage::previous, 
         :current  => Storage::current, 
         :average  => Storage::average, 
         :max      => Storage::max, 

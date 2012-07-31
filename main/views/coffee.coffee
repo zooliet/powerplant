@@ -235,5 +235,5 @@ jQuery ->
 					if result.type == "normal"
 						plot.start(result.current, result.average, result.max, result.min, result.interval).replot()
 					else
-						plot.diff(result.average, result.current, result.interval).replot()
+						plot.diff(result.previous, result.current, result.interval).replot()
 	

@@ -31,6 +31,7 @@ class Storage
 
     #  do some work here with those sampling data
     # Storage::previous = Storage::FFT_SIZE.times.map { 30 + rand(30) }
+    self::previous = Storage::FFT_SIZE.times.map { 20 + rand(50) }  
     self::current  = Storage::FFT_SIZE.times.map { 20 + rand(50) }    
     # self::average  = Storage::FFT_SIZE.times.map { 20 + rand(50) }    
     # self::max  = Storage::FFT_SIZE.times.map { 20 + rand(50) }    
@@ -40,7 +41,7 @@ class Storage
       self::min[i]      = self::current[i] if self::current[i] <= self::min[i]
       # self::average[i]  = (self::current[i] + self::average[i]) / self::count
       # self::diff[i]     = self::current[i] - self::average[i]
-      self::average[i] = 45
+      self::average[i] = ((self::current[i] + (self::average[i] * self::count))/(self::count + 1).to_f).round.to_i
       # self::min[i] = 20
     end
     self::count += 1
