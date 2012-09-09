@@ -59,7 +59,7 @@ jQuery ->
 				diff_ret.push([i, value])
 
 			$.jqplot 'graph', [diff_ret],
-				title: "Acoustic Spectrum Difference"
+				title: "Ultra-Acoustic Spectrum"
 				# animate: true
 				# animateReplot: true
 				seriesDefaults:
@@ -113,7 +113,7 @@ jQuery ->
 						
 			$.jqplot 'graph', [current_ret, average_ret, max_ret, min_ret],
 				seriesColors: ["rgba(78, 135, 194, 0.7)", "rgb(211, 235, 59)", "rgb(192,0,0)", "rgb(0,0,192)"] # seriesColors: [ "#c5b47f"]
-				title: "Acoustic Spectrum"
+				title: "Ultra-Acoustic Spectrum"
 				# series: [{fill: true}, {}]
 				fillBetween: {
 					series1: 2
@@ -235,7 +235,7 @@ jQuery ->
 					if result.type == "normal"
 						plot.start(result.current, result.average, result.max, result.min, result.interval).replot()
 					else
-						plot.diff(result.average, result.current, result.interval).replot()
+						plot.diff(result.previous, result.current, result.interval).replot()
 	
 	$('div#siggen table tr').live "click", ->
 		url = $(@).data('ref')
