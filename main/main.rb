@@ -79,6 +79,10 @@ EventMachine.run do     # <-- Changed EM to EventMachine
       data.to_json
     end  	
     
+    get "/siggen/:type.js" do
+      puts "***#{params[:type]}"
+    end
+    
     private
     def local_ip
       orig, Socket.do_not_reverse_lookup = Socket.do_not_reverse_lookup, true

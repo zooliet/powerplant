@@ -1,8 +1,21 @@
+
+
 <div class="ui-widget ui-corner-all">
 	<div class="ui-widget-content ui-corner-bottom" >
 		<div id="graph"></div>
 	</div>
 </div>	
+
+<div id="siggen">
+	<table>
+		<th>Sampling frequency - 32 kbps</th>
+		<tr data-ref="/siggen/1" class="active"><td>fc = 1 KHz </td></tr>
+		<tr data-ref="/siggen/2"><td>fc = 2 KHz </td></tr>
+		<tr data-ref="/siggen/3"><td>fc = 10 KHz </td></tr>
+		<tr data-ref="/siggen/4"><td>fc = 2 KHz + 10 KHz</td></tr>
+		<tr data-ref="/siggen/5"><td>fc = 2 KHz(Big) + 10 KHz(Small)</td></tr>
+	</table>
+</div>
 
 <div id="controls">
 	<ul class="buttons">
@@ -18,6 +31,9 @@
 		<li data-ref="/test/8/diff">Test #2</li>
 	</ul>
 </div>
+
+
+
 
 <div id="hostip" data-hostip="<%= @host_ip %>">
 	

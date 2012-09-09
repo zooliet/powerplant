@@ -215,7 +215,7 @@ jQuery ->
 
 	$('div#controls ul.buttons li').live "click", ->
 		url = $(@).data('ref')
-		if url == '/start' or url == '/stop'
+		if url is '/start' or url is '/stop'
 			url = "#{url}.js"
 			type = 'script'
 			$.ajax
@@ -237,3 +237,16 @@ jQuery ->
 					else
 						plot.diff(result.average, result.current, result.interval).replot()
 	
+	$('div#siggen table tr').live "click", ->
+		url = $(@).data('ref')
+		type = 'script'
+		$.ajax
+			type: 'GET'
+			dataType: type
+			url: "#{url}.js"	
+		
+		$('div#siggen table tr.active').removeClass('active')
+		$(@).addClass('active')
+	
+
+
