@@ -1,3 +1,9 @@
+PATH
+  remote: ~/.rvm/gems/ruby-1.9.2-p320@rails3.1/gems/arm_fftw-0.0.1
+  specs:
+    arm_fftw (0.0.1)
+      narray
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -20,6 +26,7 @@ GEM
       multi_json (~> 1.0)
     json (1.7.4)
     multi_json (1.3.6)
+    narray (0.6.0.1)
     rack (1.4.1)
     rack-protection (1.2.0)
       rack
@@ -38,6 +45,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  arm_fftw (= 0.0.1)!
   async_sinatra
   coffee-script
   em-redis

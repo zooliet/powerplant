@@ -5,6 +5,8 @@ require 'socket'
 require 'coffee-script'
 require 'json'
 
+require 'arm_fftw'
+
 require './storage.rb'
 
 EventMachine.run do     # <-- Changed EM to EventMachine
@@ -15,16 +17,18 @@ EventMachine.run do     # <-- Changed EM to EventMachine
       puts "Production configuration goes here..."
     end
 
-    sampling = lambda { puts "Get sampled data" }
-    fft      = lambda do |data| 
-      puts "Perform FFT"; 
+    sampling = lambda do 
+      Storage.sampling
+    end
+    
+    fft  = lambda do |data| 
       Storage.fft       
       data = { 
-        :previous => Storage::previous, 
+        # :previous => Storage::previous, 
         :current  => Storage::current,
-        :average  => Storage::average,
-        :max      => Storage::max, 
-        :min      => Storage::min         
+        # :average  => Storage::average,
+        # :max      => Storage::max, 
+        # :min      => Storage::min         
       }
       $ws.send(data.to_json)      
     end
@@ -38,8 +42,9 @@ EventMachine.run do     # <-- Changed EM to EventMachine
       if $timer
         puts "Skip timer"
       else
-        Storage.reset
-        $timer = EM.add_periodic_timer(5) do 
+        # Storage.reset
+        # $timer = EM.add_periodic_timer(5) do 
+        $timer = EM.add_timer(5) do 
           puts Time.now
           EM.defer(sampling, fft)
           # data = { :previous => Storage::previous, :current  => Storage::current }
@@ -79,8 +84,9 @@ EventMachine.run do     # <-- Changed EM to EventMachine
       data.to_json
     end  	
     
-    get "/siggen/:type.js" do
-      puts "***#{params[:type]}"
+    aget "/siggen/:type.js" do
+      # puts "***#{params[:type]}"
+      Storage.siggen(params[:type])
     end
     
     private

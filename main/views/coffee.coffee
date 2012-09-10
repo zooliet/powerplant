@@ -28,13 +28,13 @@ jQuery ->
 
 	plot =
 		current: 
-			[].push(50) for i in [0...128]		
-		average: 
-			[].push(50) for i in [0...128]
-		max: 
-			[].push(100) for i in [0...128]		
-		min: 
-			[].push(0) for i in [0...128]		
+			a = ( i for i in [1...1024])
+		# average: 
+		# 	[].push(50) for i in [0...1024]
+		# max: 
+		# 	[].push(100) for i in [0...1024]		
+		# min: 
+		# 	[].push(0) for i in [0...102412]		
 
 		picks: (bins, interval) ->
 			ret = []
@@ -104,24 +104,29 @@ jQuery ->
 				cursor:
 					show: true
 				
-		start: (current=@current, average=@average, max=@max, min=@min, interval=2) ->
+		start: (current = @.current, interval = 2) ->
+		# start: (current=@current, average=@average, max=@max, min=@min, interval=2) ->
 			# previous_ret = @.picks(previous, interval)			
-			current_ret  = @.picks(current, interval)			
-			average_ret  = @.picks(average, interval)			
-			max_ret  		 = @.picks(max, interval)			
-			min_ret  		 = @.picks(min, interval)			
+			# current_ret  = @.picks(current, interval)	
+			current_ret = current		
+			# average_ret  = @.picks(average, interval)			
+			# max_ret  		 = @.picks(max, interval)			
+			# min_ret  		 = @.picks(min, interval)			
 						
-			$.jqplot 'graph', [current_ret, average_ret, max_ret, min_ret],
-				seriesColors: ["rgba(78, 135, 194, 0.7)", "rgb(211, 235, 59)", "rgb(192,0,0)", "rgb(0,0,192)"] # seriesColors: [ "#c5b47f"]
+			$.jqplot 'graph', [current_ret],
+			# $.jqplot 'graph', [current_ret, average_ret, max_ret, min_ret],
+			# 	seriesColors: ["rgba(78, 135, 194, 0.7)", "rgb(211, 235, 59)", "rgb(192,0,0)", "rgb(0,0,192)"] # seriesColors: [ "#c5b47f"]
+				seriesColors: ["rgba(78, 135, 194, 0.7)"]
+				
 				title: "Ultra-Acoustic Spectrum"
 				# series: [{fill: true}, {}]
-				fillBetween: {
-					series1: 2
-					series2: 3
-					color: "rgba(227, 167, 111, 0.7)"
-					baseSeries: 0,
-					fill: true
-				}
+				# fillBetween: {
+				# 	series1: 2
+				# 	series2: 3
+				# 	color: "rgba(227, 167, 111, 0.7)"
+				# 	baseSeries: 0,
+				# 	fill: true
+				# }
         
 				seriesDefaults: 
 					showMarker: false
@@ -197,12 +202,16 @@ jQuery ->
 	
 	ws.onmessage = (evt) ->
 		result = $.parseJSON(evt.data)  #JSON.stringify(evt.data)
-		console.log(result)
+		# console.log(result)
 		# for k,v of result
 		# 	console.log(k + " is " + v)
 		
 		# result = evt.data
-		plot.start(result.current, result.average, result.max, result.min, 4).replot()
+		# plot.start(result.current, result.average, result.max, result.min, 4).replot()
+		# plot.start(result.current, 4)
+		# plot.start((0 for i in [1...1024]));
+		plot.start(result.current).replot()
+		# console.log(result.current)
 		
 	ws.onclose = ->
 		# alert("Socket closed")
