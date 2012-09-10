@@ -23,12 +23,9 @@ jQuery ->
 					# console.log(k + " is " + v)
 ########################################################################################					
 
-
-########################################################################################					
-
 	plot =
 		current: 
-			a = ( i for i in [1...1024])
+			a = ( 10 for i in [1...1024])
 		# average: 
 		# 	[].push(50) for i in [0...1024]
 		# max: 
@@ -43,12 +40,96 @@ jQuery ->
 				if (index+1) % interval == 0
 					accumulator = accumulator + value
 					accumulator = accumulator / interval
-					ret.push([index*8, accumulator])
+					ret.push([index*31.25, accumulator])
 					accumulator = 0
 				else
 					accumulator = accumulator + value
 			ret
-			
+							
+		start: (current = @current, interval = 1) ->
+		# start: (current=@current, average=@average, max=@max, min=@min, interval=2) ->
+			# previous_ret = @.picks(previous, interval)			
+			current_ret  = @.picks(current, interval)	
+			# average_ret  = @.picks(average, interval)			
+			# max_ret  		 = @.picks(max, interval)			
+			# min_ret  		 = @.picks(min, interval)
+			# console.log(current_ret)			
+						
+			$.jqplot 'graph', [current_ret],
+			# $.jqplot 'graph', [current_ret, average_ret, max_ret, min_ret],
+			# 	seriesColors: ["rgba(78, 135, 194, 0.7)", "rgb(211, 235, 59)", "rgb(192,0,0)", "rgb(0,0,192)"] # seriesColors: [ "#c5b47f"]
+				seriesColors: ["rgba(78, 135, 194, 0.7)"]
+				
+				title: "Ultra-Acoustic Spectrum (32kbps sampling, 1024-DFT)"
+				# series: [{fill: true}, {}]
+				# fillBetween: {
+				# 	series1: 2
+				# 	series2: 3
+				# 	color: "rgba(227, 167, 111, 0.7)"
+				# 	baseSeries: 0,
+				# 	fill: true
+				# }
+        
+				seriesDefaults: 
+					showMarker: false
+					# pointLabels:{ 
+					# 	show:true
+					# 	# location:'s'
+					# 	ypadding: 3 
+					# 	location: 'se'
+					# 	edgeTolerance: 10
+					# }
+					rendererOptions: 
+						smooth: true
+						animation:
+							show: true
+				axesDefaults:
+					rendererOptions:
+						baselineWidth: 1.5
+						baselineColor: '#444444'
+						drawBaseline: false
+				axes:
+					xaxis:
+						min: 0
+						max: 32000
+						# min: current_ret[0][0]
+						# max: current_ret[current_ret.length-1][0]
+						numberTicks: 17
+						# tickInterval: 8
+						tickOptions: 
+							formatString: "%d"
+					yaxis:
+						# renderer: $.jqplot.LogAxisRenderer
+						forceTickAt0: true
+						pad: 0
+						rendererOptions:
+							minorTicks: 1
+						tickOptions:
+							formatString: "%d dB"
+							# formatString:'%.1f'
+							showMark: false
+						min: 0
+						max: 50
+						tickInterval: 10
+				grid: 
+					background: 'rgba(57,57,57,0.0)'
+					drawBorder: true
+					shadow: false
+					# gridLineColor: '#66666'
+					# gridLineWidth: 1
+				highlighter:
+					show: true
+					sizeAdjust: 1
+					# tooltipLocation: 'w'
+					# tooltipAxes: 'y'
+					# tooltipFormatString: '<b><i><span style="color:black;">%.1f</span></i></b>'
+					useAxesFormatters: false
+				cursor:
+					show: true
+		# click_binding: ->
+		# 	$('div#graph').live 'jqplotDataClick', (ev, seriesIndex, pointIndex, data) ->
+		# 		# alert("#{data[0]}")
+		# 		plot.start(plot.current, plot.previous, 4).replot()
 		
 		diff: (previous=@previous, current=@current, interval=8) ->
 			previous_ret = @.picks(previous, interval)			
@@ -103,93 +184,7 @@ jQuery ->
 					useAxesFormatters: false
 				cursor:
 					show: true
-				
-		start: (current = @.current, interval = 2) ->
-		# start: (current=@current, average=@average, max=@max, min=@min, interval=2) ->
-			# previous_ret = @.picks(previous, interval)			
-			# current_ret  = @.picks(current, interval)	
-			current_ret = current		
-			# average_ret  = @.picks(average, interval)			
-			# max_ret  		 = @.picks(max, interval)			
-			# min_ret  		 = @.picks(min, interval)			
-						
-			$.jqplot 'graph', [current_ret],
-			# $.jqplot 'graph', [current_ret, average_ret, max_ret, min_ret],
-			# 	seriesColors: ["rgba(78, 135, 194, 0.7)", "rgb(211, 235, 59)", "rgb(192,0,0)", "rgb(0,0,192)"] # seriesColors: [ "#c5b47f"]
-				seriesColors: ["rgba(78, 135, 194, 0.7)"]
-				
-				title: "Ultra-Acoustic Spectrum"
-				# series: [{fill: true}, {}]
-				# fillBetween: {
-				# 	series1: 2
-				# 	series2: 3
-				# 	color: "rgba(227, 167, 111, 0.7)"
-				# 	baseSeries: 0,
-				# 	fill: true
-				# }
-        
-				seriesDefaults: 
-					showMarker: false
-					# pointLabels:{ 
-					# 	show:true
-					# 	# location:'s'
-					# 	ypadding: 3 
-					# 	location: 'se'
-					# 	edgeTolerance: 10
-					# }
-					rendererOptions: 
-						smooth: true
-						animation:
-							show: true
-				axesDefaults:
-					rendererOptions:
-						baselineWidth: 1.5
-						baselineColor: '#444444'
-						drawBaseline: false
-				axes:
-					xaxis:
-						# min: 1
-						# max: previous_ret.length
-						min: current_ret[0][0]
-						max: current_ret[current_ret.length-1][0]
-						# numberTicks: 12
-						# tickInterval: 8
-						tickOptions: 
-							formatString: "%d Hz"
-					yaxis:
-						renderer: $.jqplot.LogAxisRenderer
-						forceTickAt0: true
-						pad: 0
-						rendererOptions:
-							minorTicks: 1
-						tickOptions:
-							formatString: "%'d"
-							# formatString:'%.1f'
-							showMark: false
-						# min: 0
-						# max: 100
-						# tickInterval: 10
-				grid: 
-					background: 'rgba(57,57,57,0.0)'
-					drawBorder: true
-					shadow: false
-					# gridLineColor: '#66666'
-					# gridLineWidth: 1
-				highlighter:
-					show: true
-					sizeAdjust: 1
-					# tooltipLocation: 'w'
-					# tooltipAxes: 'y'
-					# tooltipFormatString: '<b><i><span style="color:black;">%.1f</span></i></b>'
-					useAxesFormatters: false
-				cursor:
-					show: true
-		# click_binding: ->
-		# 	$('div#graph').live 'jqplotDataClick', (ev, seriesIndex, pointIndex, data) ->
-		# 		# alert("#{data[0]}")
-		# 		plot.start(plot.current, plot.previous, 4).replot()
-
-
+					
 ########################################################################################
 
 	# plot.click_binding()
@@ -211,7 +206,7 @@ jQuery ->
 		# plot.start(result.current, 4)
 		# plot.start((0 for i in [1...1024]));
 		plot.start(result.current).replot()
-		# console.log(result.current)
+		console.log(result.current)
 		
 	ws.onclose = ->
 		# alert("Socket closed")
@@ -242,7 +237,9 @@ jQuery ->
 					for k,v of result
 						console.log(k + " is " + v)
 					if result.type == "normal"
-						plot.start(result.current, result.average, result.max, result.min, result.interval).replot()
+						# plot.start(result.current, result.average, result.max, result.min, result.interval).replot()
+						plot.start(result.current, result.interval).replot()
+						
 					else
 						plot.diff(result.previous, result.current, result.interval).replot()
 	

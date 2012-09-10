@@ -8,28 +8,32 @@
 
 <div id="siggen">
 	<table>
-		<th>Sampling frequency - 32 kbps</th>
-		<tr data-ref="/siggen/1" class="active"><td>fc = 1 KHz </td></tr>
-		<tr data-ref="/siggen/2"><td>fc = 2 KHz </td></tr>
-		<tr data-ref="/siggen/3"><td>fc = 10 KHz </td></tr>
-		<tr data-ref="/siggen/4"><td>fc = 2 KHz + 10 KHz</td></tr>
-		<tr data-ref="/siggen/5"><td>fc = 2 KHz(Big) + 10 KHz(Small)</td></tr>
+		<th>Signal Generator</th>
+		<tr data-ref="/siggen/1" class="active" onclick=""><td>fc = 1 KHz </td></tr>
+		<tr data-ref="/siggen/2" onclick=""><td>fc = 2 KHz </td></tr>
+		<tr data-ref="/siggen/3" onclick=""><td>fc = 10 KHz </td></tr>
+		<tr data-ref="/siggen/4" onclick=""><td>fc = 2 KHz + 10 KHz</td></tr>
+		<tr data-ref="/siggen/5" onclick=""><td>fc = 2 KHz(Big) + 10 KHz(Small)</td></tr>
+		<tr data-ref="/siggen/6" onclick=""><td>fc = 2 KHz(Medium) + 10 KHz(Small)</td></tr>
+		<tr data-ref="/siggen/7" onclick=""><td>fc = 2 KHz + 11 KHz</td></tr>
+		<tr data-ref="/siggen/8" onclick=""><td>fc = 2 KHz(Big) + 11 KHz(Small)</td></tr>
+		<tr data-ref="/siggen/9" onclick=""><td>fc = 2 KHz(Big) + 10 KHz(Small) with Noise</td></tr>
 	</table>
 </div>
 
 <div id="controls">
 	<ul class="buttons">
-		<li data-ref="/start">Start</li>
-		<li data-ref="/stop">Stop</li>
-		<li data-ref="/test/1/normal">Zoom #1</li>
-		<li data-ref="/test/8/normal">Zoom #8</li>
+		<li data-ref="/start" onclick="">Start</li>
+		<li data-ref="/stop" onclick="">Stop</li>
+		<li data-ref="/test/1/normal" onclick="">Zoom-in</li>
+		<li data-ref="/test/4/normal" onclick="">Zoom-out</li>
 	</ul>
 	<ul class="buttons">
-		<li data-ref="/test/1/diff">Difference</li>
+		<li data-ref="">Max</li>
 		<!-- <li data-ref="/test/1/average">Average</li> -->
-		<li data-ref="/test/2/diff">Diff #2</li>
-		<li data-ref="/test/2/diff">Diff #4</li>
-		<li data-ref="/test/8/diff">Diff #8</li>
+		<li data-ref="">Min</li>
+		<li data-ref="">Average</li>
+		<li data-ref="">Compare</li>
 	</ul>
 </div>
 

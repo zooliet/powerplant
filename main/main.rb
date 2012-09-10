@@ -43,8 +43,8 @@ EventMachine.run do     # <-- Changed EM to EventMachine
         puts "Skip timer"
       else
         # Storage.reset
-        # $timer = EM.add_periodic_timer(5) do 
-        $timer = EM.add_timer(5) do 
+        $timer = EM.add_periodic_timer(5) do 
+        # $timer = EM.add_timer(5) do 
           puts Time.now
           EM.defer(sampling, fft)
           # data = { :previous => Storage::previous, :current  => Storage::current }
@@ -69,14 +69,14 @@ EventMachine.run do     # <-- Changed EM to EventMachine
     end
 
     get "/test/:interval/:type.json" do
-      Storage.reset
-      Storage.fft    
+      # Storage.reset
+      # Storage.fft    
       data = { 
-        :previous => Storage::previous, 
+        # :previous => Storage::previous, 
         :current  => Storage::current, 
-        :average  => Storage::average, 
-        :max      => Storage::max, 
-        :min      => Storage::min, 
+        # :average  => Storage::average, 
+        # :max      => Storage::max, 
+        # :min      => Storage::min, 
         :interval => params[:interval], 
         :type => params[:type]
       }

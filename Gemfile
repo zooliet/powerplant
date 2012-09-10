@@ -16,5 +16,6 @@ gem 'json'
 gem 'em-redis'
 gem 'em-websocket'
 #gem 'websocket-rack', :require => 'rack/websocket'
-gem 'arm_fftw', '=0.0.1', :path => '~/.rvm/gems/ruby-1.9.2-p320@rails3.1/gems/arm_fftw-0.0.1'
+# gem 'arm_fftw', '=0.0.1', :path => '~/.rvm/gems/ruby-1.9.2-p320@rails3.1/gems/arm_fftw-0.0.1'
+gem 'arm_fftw', '=0.0.1', :path => '~/.rvm/gems/ruby-1.9.2-p318@rails3.2/gems/arm_fftw-0.0.1'
 

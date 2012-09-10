@@ -1,5 +1,5 @@
 PATH
-  remote: ~/.rvm/gems/ruby-1.9.2-p320@rails3.1/gems/arm_fftw-0.0.1
+  remote: ~/.rvm/gems/ruby-1.9.2-p318@rails3.2/gems/arm_fftw-0.0.1
   specs:
     arm_fftw (0.0.1)
       narray

@@ -39,11 +39,10 @@ class Storage
     fm = ARM::FFTW.fft(Storage::sampled)
     # self::current = fm.to_a.map {|f| (10 * Math.log10(((f.real**2 + f.imaginary**2)**0.5).round(2) + 1)).to_i }
     self::current = fm.to_a.map do |f| 
-      abs =  ((f.real**2 + f.imaginary**2)**0.5).to_i
-      abs = 1 if abs == 0
-      power = 10 * Math.log10(abs).to_i
-      power = 1 if power == 0
-      power      
+      power =  ((f.real**2 + f.imaginary**2)**0.5).round(2)
+      power_in_log = 10 * Math.log10(power)
+      power_in_log = 0.0 if power_in_log.infinite?
+      power_in_log.round(2).abs
     end
     # self::count += 1
   end
@@ -59,6 +58,7 @@ class Storage
     a1 = 1
     f2 = 0
     a2 = 0 
+    noise = false
     
     if type == '1'
       f1 = 1000   # 1 khz
@@ -75,6 +75,26 @@ class Storage
       f2 = 10000  # 10 KHz
       a1 = 10
       a2 = 1
+    elsif type == '6'
+      f1 = 2000   # 2 KHz
+      f2 = 10000  # 10 KHz
+      a1 = 5
+      a2 = 1
+    elsif type == '7'
+      f1 = 2000   # 2 KHz
+      f2 = 11000  # 11 KHz
+      a2 = 1
+    elsif type == '8'
+      f1 = 2000   # 2 KHz
+      f2 = 11000  # 11 KHz
+      a1 = 10
+      a2 = 1
+    elsif type == '9'
+      f1 = 2000   # 2 KHz
+      f2 = 10000  # 10 KHz
+      a1 = 10
+      a2 = 1
+      noise = true
     else
       f1 = 1000   # 1 khz
     end
@@ -82,8 +102,14 @@ class Storage
     CSV.open("./adc.csv", "wb") do |csv|
       # puts "***#{a1} : #{f1} : #{fs}"
       data = (0...Storage::FFT_SIZE).map do |n|
-        a1 * Math.sin(2*Math::PI*f1*(n/fs.to_f)).round(2) + 
-        a2 * Math.sin(2*Math::PI*f2*(n/fs.to_f)).round(2) 
+        unless noise
+          a1 * Math.sin(2*Math::PI*f1*(n/fs.to_f)).round(2) + 
+          a2 * Math.sin(2*Math::PI*f2*(n/fs.to_f)).round(2)         
+        else
+          a1 * Math.sin(2*Math::PI*f1*(n/fs.to_f)).round(2) + 
+          a2 * Math.sin(2*Math::PI*f2*(n/fs.to_f)).round(2) +
+          rand(10)*0.01
+        end
       end
       csv << data
     end
