@@ -40,7 +40,7 @@ jQuery ->
 				if (index+1) % interval == 0
 					accumulator = accumulator + value
 					accumulator = accumulator / interval
-					ret.push([index*31.25, accumulator])
+					ret.push([index*190.73486328125, accumulator])
 					accumulator = 0
 				else
 					accumulator = accumulator + value
@@ -60,7 +60,7 @@ jQuery ->
 			# 	seriesColors: ["rgba(78, 135, 194, 0.7)", "rgb(211, 235, 59)", "rgb(192,0,0)", "rgb(0,0,192)"] # seriesColors: [ "#c5b47f"]
 				seriesColors: ["rgba(78, 135, 194, 0.7)"]
 				
-				title: "Ultra-Acoustic Spectrum (32kbps sampling, 1024-DFT)"
+				title: "Ultra-Acoustic Spectrum"
 				# series: [{fill: true}, {}]
 				# fillBetween: {
 				# 	series1: 2
@@ -91,10 +91,10 @@ jQuery ->
 				axes:
 					xaxis:
 						min: 0
-						max: 32000
+						max: 95000
 						# min: current_ret[0][0]
 						# max: current_ret[current_ret.length-1][0]
-						numberTicks: 17
+						numberTicks: 20
 						# tickInterval: 8
 						tickOptions: 
 							formatString: "%d"
@@ -220,6 +220,14 @@ jQuery ->
 	$('div#controls ul.buttons li').live "click", ->
 		url = $(@).data('ref')
 		if url is '/start' or url is '/stop'
+			url = "#{url}.js"
+			type = 'script'
+			$.ajax
+				type: 'GET'
+				dataType: type
+				url: url			
+		else if url is '/calibration'
+			console.log("Calibration")
 			url = "#{url}.js"
 			type = 'script'
 			$.ajax

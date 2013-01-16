@@ -6,6 +6,7 @@ require 'coffee-script'
 require 'json'
 
 require 'arm_fftw'
+require 'pv_adc'
 
 require './storage.rb'
 
@@ -17,19 +18,42 @@ EventMachine.run do     # <-- Changed EM to EventMachine
       puts "Production configuration goes here..."
     end
 
-    sampling = lambda do 
+    adc_sampling = lambda do
+      PvADC.sampling
+    end
+
+    storage_sampling = lambda do 
       Storage.sampling
     end
+
+
+    # fm = ARM::FFTW.fft(Storage::sampled)
+    # # self::current = fm.to_a.map {|f| (10 * Math.log10(((f.real**2 + f.imaginary**2)**0.5).round(2) + 1)).to_i }
+    # self::current = fm.to_a.map do |f| 
+    #   power =  ((f.real**2 + f.imaginary**2)**0.5).round(2)
+    #   power_in_log = 10 * Math.log10(power)
+    #   power_in_log = 0.0 if power_in_log.infinite?
+    #   power_in_log.round(2).abs
+    # end
     
-    fft  = lambda do |data| 
-      Storage.fft       
-      data = { 
-        # :previous => Storage::previous, 
-        :current  => Storage::current,
-        # :average  => Storage::average,
-        # :max      => Storage::max, 
-        # :min      => Storage::min         
+    fft  = lambda do |data|
+      fm = ARM::FFTW.fft(data).to_a.map do |f|
+        power =  ((f.real**2 + f.imaginary**2)**0.5).round(2)
+        power_in_log = 10 * Math.log10(power)
+        power_in_log = 0.0 if power_in_log.infinite?
+        power_in_log.round(2).abs
+      end
+      data = {
+        :current => fm
       }
+      # puts "#{fm.inspect}"
+      # data = { 
+      #   # :previous => Storage::previous, 
+      #   :current  => Storage::current,
+      #   # :average  => Storage::average,
+      #   # :max      => Storage::max, 
+      #   # :min      => Storage::min         
+      # }
       $ws.send(data.to_json)      
     end
     
@@ -46,7 +70,7 @@ EventMachine.run do     # <-- Changed EM to EventMachine
         $timer = EM.add_periodic_timer(5) do 
         # $timer = EM.add_timer(5) do 
           puts Time.now
-          EM.defer(sampling, fft)
+          EM.defer(adc_sampling, fft)
           # data = { :previous => Storage::previous, :current  => Storage::current }
           # $ws.send(data.to_json)
 
@@ -66,6 +90,26 @@ EventMachine.run do     # <-- Changed EM to EventMachine
     get "/application.js" do
       content_type "text/javascript"
       coffee :coffee
+    end
+
+
+    aget "/calibration.js" do
+      if $timer
+        EM.cancale_timer($timer)
+        puts "Timer stopped: #{$timer}"
+        $timer = nil
+      end
+      
+      Storage.siggen
+      data = {
+        :current  => Storage::current
+        # :interval => params[:interval], 
+        # :type => params[:type]
+      }
+      EM.defer(storage_sampling, fft)
+      content_type "text/javascript"
+      # content_type :json
+      # data.to_json
     end
 
     get "/test/:interval/:type.json" do

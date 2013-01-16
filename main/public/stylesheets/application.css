@@ -45,8 +45,8 @@ div#graph {
 }
 
 div#controls {
-/*	margin: 20px 0px;*/
-	margin: 0px 0px 0px 500px;
+	margin: 30px auto;
+/*	margin: 0px 0px 0px 500px;*/
 	padding: 30px;
 	text-align: center;
 }
@@ -59,9 +59,8 @@ ul.buttons {
 
 ul.buttons li {
 	display: inline-block;
-	width: 100px;
+	width: 120px;
 	height: 24px;
-	margin-top: 10px;
 	margin-right: 30px;
 	padding: 10px 5px;
 	color: #f2f2f2;

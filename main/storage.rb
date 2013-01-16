@@ -52,59 +52,26 @@ class Storage
     Storage::sampled = CSV.readlines(file)[0].map {|v| v.to_f.round(2)}
   end
   
-  def self.siggen(type)
-    fs = 32000 # 32 kbps sampling
-    f1 = 1000 # 1 khz
+  def self.siggen
+    fs = 195312.5 # 160 kbps sampling
+    f1 = 20000 # 20 khz
     a1 = 1
-    f2 = 0
-    a2 = 0 
+    f2 = 40000 # 40 khz
+    a2 = 1
+    f3 = 60000 # 60 khz
+    a3 = 1
+    f4 = 80000 # 80 khz
+    a4 = 1
     noise = false
-    
-    if type == '1'
-      f1 = 1000   # 1 khz
-    elsif type == '2'
-      f1 = 2000   # 2 khz
-    elsif type == '3'
-      f1 = 10000  # 10 KHz
-    elsif type == '4'
-      f1 = 2000   # 2 KHz
-      f2 = 10000  # 10 KHz
-      a2 = 1
-    elsif type == '5'
-      f1 = 2000   # 2 KHz
-      f2 = 10000  # 10 KHz
-      a1 = 10
-      a2 = 1
-    elsif type == '6'
-      f1 = 2000   # 2 KHz
-      f2 = 10000  # 10 KHz
-      a1 = 5
-      a2 = 1
-    elsif type == '7'
-      f1 = 2000   # 2 KHz
-      f2 = 11000  # 11 KHz
-      a2 = 1
-    elsif type == '8'
-      f1 = 2000   # 2 KHz
-      f2 = 11000  # 11 KHz
-      a1 = 10
-      a2 = 1
-    elsif type == '9'
-      f1 = 2000   # 2 KHz
-      f2 = 10000  # 10 KHz
-      a1 = 10
-      a2 = 1
-      noise = true
-    else
-      f1 = 1000   # 1 khz
-    end
     
     CSV.open("./adc.csv", "wb") do |csv|
       # puts "***#{a1} : #{f1} : #{fs}"
       data = (0...Storage::FFT_SIZE).map do |n|
         unless noise
           a1 * Math.sin(2*Math::PI*f1*(n/fs.to_f)).round(2) + 
-          a2 * Math.sin(2*Math::PI*f2*(n/fs.to_f)).round(2)         
+          a2 * Math.sin(2*Math::PI*f2*(n/fs.to_f)).round(2) +
+          a3 * Math.sin(2*Math::PI*f3*(n/fs.to_f)).round(2) +
+          a4 * Math.sin(2*Math::PI*f4*(n/fs.to_f)).round(2) 
         else
           a1 * Math.sin(2*Math::PI*f1*(n/fs.to_f)).round(2) + 
           a2 * Math.sin(2*Math::PI*f2*(n/fs.to_f)).round(2) +
