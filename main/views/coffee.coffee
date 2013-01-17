@@ -4,6 +4,7 @@
 
 jQuery ->
 	$.jqplot._noToImageButton = true;
+
 	$("a#coffee_click").live "click", (e) ->
 		e.preventDefault()
 		$.ajax
@@ -25,13 +26,9 @@ jQuery ->
 
 	plot =
 		current: 
-			a = ( 10 for i in [1...1024])
-		# average: 
-		# 	[].push(50) for i in [0...1024]
-		# max: 
-		# 	[].push(100) for i in [0...1024]		
-		# min: 
-		# 	[].push(0) for i in [0...102412]		
+			a = ( 0 for i in [1...1024])
+		average: 
+			a = ( 0 for i in [1...1024])
 
 		picks: (bins, interval) ->
 			ret = []
@@ -40,28 +37,22 @@ jQuery ->
 				if (index+1) % interval == 0
 					accumulator = accumulator + value
 					accumulator = accumulator / interval
-					ret.push([index*190.73486328125, accumulator])
+					ret.push([index*190.73486328125, accumulator])   #fs / N = 195312.5 / 1024
 					accumulator = 0
 				else
 					accumulator = accumulator + value
 			ret
 							
-		start: (current = @current, interval = 1) ->
-		# start: (current=@current, average=@average, max=@max, min=@min, interval=2) ->
-			# previous_ret = @.picks(previous, interval)			
+		start: (average=@average, current = @current, interval = 1) ->
 			current_ret  = @.picks(current, interval)	
-			# average_ret  = @.picks(average, interval)			
-			# max_ret  		 = @.picks(max, interval)			
-			# min_ret  		 = @.picks(min, interval)
-			# console.log(current_ret)			
+			average_ret  = @.picks(average, interval)			
 						
-			$.jqplot 'graph', [current_ret],
-			# $.jqplot 'graph', [current_ret, average_ret, max_ret, min_ret],
-			# 	seriesColors: ["rgba(78, 135, 194, 0.7)", "rgb(211, 235, 59)", "rgb(192,0,0)", "rgb(0,0,192)"] # seriesColors: [ "#c5b47f"]
-				seriesColors: ["rgba(78, 135, 194, 0.7)"]
+			$.jqplot 'graph', [average_ret, current_ret],
+				seriesColors: ["rgba(78, 135, 194, 0.7)", "rgb(211, 235, 59)"] # seriesColors: [ "#c5b47f"]
+				# seriesColors: ["rgba(78, 135, 194, 0.7)"]
 				
 				title: "Ultra-Acoustic Spectrum"
-				# series: [{fill: true}, {}]
+				series: [{fill: true}, {}]
 				# fillBetween: {
 				# 	series1: 2
 				# 	series2: 3
@@ -90,14 +81,20 @@ jQuery ->
 						drawBaseline: false
 				axes:
 					xaxis:
-						min: 0
-						max: 95000
-						# min: current_ret[0][0]
-						# max: current_ret[current_ret.length-1][0]
+						min: 0			# min: current_ret[0][0]
+						max: 95000  # max: current_ret[current_ret.length-1][0]
+						# renderer: $.jqplot.CategoryAxisRenderer
+						drawMajorGridlines: true
+						showTicks: true
 						numberTicks: 20
 						# tickInterval: 8
+						# labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+						# label: "Hz"
+						# tickRenderer: $.jqplot.CanvasAxisTickRenderer
 						tickOptions: 
 							formatString: "%d"
+							# showGridline: true
+							# showMark: true
 					yaxis:
 						# renderer: $.jqplot.LogAxisRenderer
 						forceTickAt0: true
@@ -111,6 +108,7 @@ jQuery ->
 						min: 0
 						max: 50
 						tickInterval: 10
+						# autoscale: true 						
 				grid: 
 					background: 'rgba(57,57,57,0.0)'
 					drawBorder: true
@@ -126,88 +124,27 @@ jQuery ->
 					useAxesFormatters: false
 				cursor:
 					show: true
-		# click_binding: ->
-		# 	$('div#graph').live 'jqplotDataClick', (ev, seriesIndex, pointIndex, data) ->
-		# 		# alert("#{data[0]}")
-		# 		plot.start(plot.current, plot.previous, 4).replot()
-		
-		diff: (previous=@previous, current=@current, interval=8) ->
-			previous_ret = @.picks(previous, interval)			
-			current_ret  = @.picks(current, interval)			
-			diff_ret = []
-			for i in [0...previous_ret.length]
-				value = current_ret[i][1] - previous_ret[i][1]
-				diff_ret.push([i, value])
+	
 
-			$.jqplot 'graph', [diff_ret],
-				title: "Ultra-Acoustic Spectrum"
-				# animate: true
-				# animateReplot: true
-				seriesDefaults:
-					renderer:$.jqplot.BarRenderer
-					# pointLabels: { show: true }
-					rendererOptions: 
-						barWidth: 2
-						# barPadding: -15
-						# barMargin: 0
-						highlightMouseOver: true
-						fillToZero: true
-						shadow: false
-				axes:
-					# yaxis: { autoscale: true }
-					xaxis:
-						# renderer: $.jqplot.CategoryAxisRenderer
-						drawMajorGridlines: true
-						showTicks: true
-						# labelRenderer: $.jqplot.CanvasAxisLabelRenderer
-						# label: "HELLO"
-						min: 0
-						max: diff_ret[diff_ret.length-1][0]
-						numberTicks: 8
-						# tickRenderer: $.jqplot.CanvasAxisTickRenderer
-						# tickOptions: 
-						# 	showGridline: true
-						# 	showMark: true
-						# 	tickInteval: 4
-				grid: 
-					background: 'rgba(57,57,57,0.0)'
-					drawBorder: true
-					shadow: false
-					# gridLineColor: '#66666'
-					# gridLineWidth: 1
-				highlighter:
-					show: true
-					sizeAdjust: 1
-					# tooltipLocation: 'w'
-					# tooltipAxes: 'y'
-					# tooltipFormatString: '<b><i><span style="color:black;">%.1f</span></i></b>'
-					useAxesFormatters: false
-				cursor:
-					show: true
-					
 ########################################################################################
 
 	# plot.click_binding()
-	plot.start()
+	gplot = plot.start()
 
 ########################################################################################
 
 	hostip = $('div#hostip').data('hostip')
 	ws = new WebSocket("ws://#{hostip}:8080/")
-	
+
 	ws.onmessage = (evt) ->
 		result = $.parseJSON(evt.data)  #JSON.stringify(evt.data)
 		# console.log(result)
 		# for k,v of result
 		# 	console.log(k + " is " + v)
-		
-		# result = evt.data
-		# plot.start(result.current, result.average, result.max, result.min, 4).replot()
-		# plot.start(result.current, 4)
-		# plot.start((0 for i in [1...1024]));
-		plot.start(result.current).replot()
-		console.log(result.current)
-		
+		gplot.destroy()
+		gplot = plot.start(result.average, result.current)
+		gplot.replot()
+								
 	ws.onclose = ->
 		# alert("Socket closed")
 
@@ -219,15 +156,7 @@ jQuery ->
 
 	$('div#controls ul.buttons li').live "click", ->
 		url = $(@).data('ref')
-		if url is '/start' or url is '/stop'
-			url = "#{url}.js"
-			type = 'script'
-			$.ajax
-				type: 'GET'
-				dataType: type
-				url: url			
-		else if url is '/calibration'
-			console.log("Calibration")
+		if url is '/start' or url is '/stop' or '/calibration'
 			url = "#{url}.js"
 			type = 'script'
 			$.ajax
@@ -246,21 +175,10 @@ jQuery ->
 						console.log(k + " is " + v)
 					if result.type == "normal"
 						# plot.start(result.current, result.average, result.max, result.min, result.interval).replot()
-						plot.start(result.current, result.interval).replot()
-						
+						plot.start(result.current, result.interval).replot()						
 					else
 						plot.diff(result.previous, result.current, result.interval).replot()
-	
-	$('div#siggen table tr').live "click", ->
-		url = $(@).data('ref')
-		type = 'script'
-		$.ajax
-			type: 'GET'
-			dataType: type
-			url: "#{url}.js"	
-		
-		$('div#siggen table tr.active').removeClass('active')
+			
+		$('div#controls ul.buttons li.active').removeClass('active')
 		$(@).addClass('active')
 	
-
-

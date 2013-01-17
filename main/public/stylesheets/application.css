@@ -69,9 +69,13 @@ ul.buttons li {
 	border-radius: 5px;
 }
 
-ul.buttons li:hover {
-	color: white;
+ul.buttons li.active {
 	background-color: #666;
+}
+
+ul.buttons li:hover {
+	color: silver;
+/*	background-color: #666;*/
 	cursor: pointer;
 }
 
