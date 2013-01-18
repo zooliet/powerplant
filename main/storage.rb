@@ -4,7 +4,7 @@ class Storage
   FFT_SIZE = 1024
   
   class << self
-    attr_accessor :current, :average, :count, :sampled
+    attr_accessor :current, :average, :count, :sampled, :per_min_average
   end
   
   def self.reset
@@ -12,6 +12,10 @@ class Storage
     Storage::average  = Storage::FFT_SIZE.times.map { 0 }    
     Storage::sampled  = Storage::FFT_SIZE.times.map { 0 } 
     Storage::count    = 1
+    File.delete('./history.csv') if File.exist?('.history.txt')
+    
+    Storage::per_min_average  = Storage::FFT_SIZE.times.map { 0 }    
+    Storage::sec_5_count      = 0    
   end
   
   def self.store(result)
@@ -20,6 +24,16 @@ class Storage
       self::average[i] = ((self::current[i] + (self::average[i] * self::count))/(self::count + 1).to_f).round.to_i
     end
     self::count += 1
+
+    Storage::per_min_average += self::average
+    Storage::sec_5_count += 1
+    if Storage::sec_5_count == 20
+      Storage::per_min_average = Storage::per_min_average / Storage::sec_5_count
+      Storage::sec_5_count = 0
+      CSV.open('./history.csv', 'ab+') do |csv|
+        csv <<   self::average
+      end
+    end
   end
   
   def self.fft    
