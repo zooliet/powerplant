@@ -31,20 +31,29 @@
 <!-- 		<script type="text/javascript" src="/javascript/plugins/jqplot.dateAxisRenderer.min.js"></script> -->
 		<script type="text/javascript" src="/javascript/plugins/jqplot.canvasAxisTickRenderer.min.js"></script>
 
+		<script type="text/javascript" src='/javascript/SurfacePlot.js'></script>
+		<script type="text/javascript" src='/javascript/ColourGradient.js'></script>
+		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+
+		<script type="text/javascript" src='/javascript/myjs.js'></script>
 
     <script src="/application.js" type="text/javascript" charset="utf-8"></script>
     
   </head>  
 	<body>
-		<div id="content">
-			<div id="header">
 
-			</div>
+		<div id="content">
+			<div id="header"></div>
 
 			<div id="main">
 				<%= yield %>    
 			</div>
 			
+			<!-- <div class="box">
+				<a href="#" id="coffee_click">coffee response</a> |
+				<a href="#" id="json_click">json response</a>	
+			</div> -->
+
 			<div id="footer">
 				&copy; Vinetel 2013
 			</div>

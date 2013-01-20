@@ -87,8 +87,7 @@ EventMachine.run do     # <-- Changed EM to EventMachine
         :current  => result 
       }
       $ws.send(data.to_json)
-      
-      
+            
       # EM.defer(storage_sampling, fft) 
       content_type "text/javascript"
       body "console.log('test.js')"
@@ -98,7 +97,28 @@ EventMachine.run do     # <-- Changed EM to EventMachine
       content_type "text/javascript"
       coffee :coffee
     end
-        
+    
+    get "/spectrogram.json" do
+  	  if $timer
+        puts "Timer stoped: #{$timer}"
+  	    ret = EM.cancel_timer($timer)
+        $timer = nil
+  	  end
+      content_type :json
+      { :key => 'value', :key2 => 'value2' }.to_json    
+    end
+    
+    get "/coffee_test.js" do
+      content_type "text/javascript"
+      coffee :coffee_test
+    end
+    
+    get "/json_test.json" do
+      content_type :json
+      { :key => 'value', :key2 => 'value2' }.to_json
+    end
+    
+  
     private
     def local_ip
       orig, Socket.do_not_reverse_lookup = Socket.do_not_reverse_lookup, true
