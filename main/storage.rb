@@ -4,7 +4,7 @@ class Storage
   FFT_SIZE = 1024
   
   class << self
-    attr_accessor :current, :average, :count, :sampled, :per_min_average
+    attr_accessor :current, :average, :count, :sampled, :per_min_average, :sec_5_count
   end
   
   def self.reset
@@ -47,7 +47,7 @@ class Storage
   end
   
   def self.sampling
-    # self.siggen(70000+rand(20000))
+    self.siggen(70000+rand(20000))
     file = "./adc.csv"
     Storage::sampled = CSV.readlines(file)[0].map {|v| v.to_f.round(2)}
   end

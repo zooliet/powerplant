@@ -53,13 +53,15 @@ EventMachine.run do     # <-- Changed EM to EventMachine
         Storage.reset
         $timer = EM.add_periodic_timer(5) do # $timer = EM.add_timer(5) do 
           puts Time.now          
-          # EM.defer(storage_sampling, fft) 
-          EM.defer(adc_sampling, fft)
+          EM.defer(storage_sampling, fft) 
+          # EM.defer(adc_sampling, fft)
           content_type "text/javascript"
           body "console.log('test.js')"
         end
         puts "Timer stared: #{$timer}"                
       end
+      content_type "text/javascript"
+      body "console.log('test.js')"
     end
 
   	aget "/stop.js" do
