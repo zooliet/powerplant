@@ -31,7 +31,7 @@ EventMachine.run do     # <-- Changed EM to EventMachine
         power =  ((f.real**2 + f.imaginary**2)**0.5).round(2)
         power_in_log = 10 * Math.log10(power)
         power_in_log = 0.0 if power_in_log.infinite?
-        power_in_log.round(2).abs
+        power_in_log.round(2).abs / 1024
       end      
       Storage.store(fm)      
       data = {             

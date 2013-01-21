@@ -28,7 +28,7 @@ class Storage
     Storage::per_min_average += self::average
     Storage::sec_5_count += 1
     if Storage::sec_5_count == 20
-      Storage::per_min_average = Storage::per_min_average / Storage::sec_5_count
+      Storage::per_min_average = Storage::per_min_average.map {|e| e / Storage::sec_5_count} 
       Storage::sec_5_count = 0
       CSV.open('./history.csv', 'ab+') do |csv|
         csv <<   self::average
