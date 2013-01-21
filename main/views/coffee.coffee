@@ -58,7 +58,7 @@ jQuery ->
 		zAxisHeader = "Z"
 		options =
 			xPos: 300
-			yPos: 100
+			yPos: 50
 			width: 500
 			height: 500
 			colourGradient: colours
@@ -181,7 +181,7 @@ jQuery ->
 							# formatString:'%.1f'
 							showMark: false
 						min: 0
-						max: 80
+						max: 100
 						tickInterval: 10
 						# autoscale: true 						
 				grid: 
