@@ -1,10 +1,11 @@
 require 'csv'
+require 'fileutils'
 
 class Storage
   FFT_SIZE = 1024
   
   class << self
-    attr_accessor :current, :average, :count, :sampled, :per_min_average, :sec_5_count
+    attr_accessor :current, :average, :count, :sampled, :per_min_average, :sec_5_count, :min_1_count
   end
   
   def self.reset
@@ -12,26 +13,49 @@ class Storage
     Storage::average  = Storage::FFT_SIZE.times.map { 0 }    
     Storage::sampled  = Storage::FFT_SIZE.times.map { 0 } 
     Storage::count    = 1
-    File.delete('./history.csv') if File.exist?('.history.txt')
+    file = File.join(File.expand_path("..", __FILE__), "history_1_hour.csv")
+    FileUtils.rm(file) if File.exist?(file)
     
     Storage::per_min_average  = Storage::FFT_SIZE.times.map { 0 }    
     Storage::sec_5_count      = 0    
+    Storage::min_1_count     = 0
   end
   
   def self.store(result)
     self::current  = result    
     Storage::FFT_SIZE.times.each do |i|
-      self::average[i] = ((self::current[i] + (self::average[i] * self::count))/(self::count + 1).to_f).round.to_i
+      if self::count == 1
+        self::average[i] = self::current[i]
+      else
+        self::average[i] = ((self::current[i] + (self::average[i] * self::count))/(self::count + 1).to_f).round.to_i
+      end
     end
     self::count += 1
 
+    file_5_sec = File.join(File.expand_path("..", __FILE__), "history_5_sec.csv") 
+    CSV.open(file_5_sec, 'ab+') do |csv|
+      csv <<   self::current
+    end
+
     Storage::per_min_average += self::average
     Storage::sec_5_count += 1
-    if Storage::sec_5_count == 20
+    # puts "***#{Storage::sec_5_count}@#{Time.now}"
+    if Storage::sec_5_count == 12  # 1 min
       Storage::per_min_average = Storage::per_min_average.map {|e| e / Storage::sec_5_count} 
       Storage::sec_5_count = 0
-      CSV.open('./history.csv', 'ab+') do |csv|
+      # puts "***history_5_sec.csv deleted@#{Time.now}"
+      FileUtils.rm(file_5_sec)
+      file_1_min = File.join(File.expand_path("..", __FILE__), "history_1_min.csv") 
+      CSV.open(file_1_min, 'ab+') do |csv|
         csv <<   self::average
+      end
+      
+      Storage::min_1_count += 1
+      if Storage::min_1_count == 60  # 1 hour
+        file_1_hour = File.join(File.expand_path("..", __FILE__), "history_1_hour.csv") 
+        FileUtils.cp(file_1_min, file_1_hour)
+        FileUtils.rm(file_1_min)
+        Storage::min_1_count = 0
       end
     end
   end
@@ -48,9 +72,10 @@ class Storage
   
   def self.sampling
     self.siggen(70000+rand(20000))
-    file = "./adc.csv"
+    file = File.join(File.expand_path("..", __FILE__), "adc.csv")  
     Storage::sampled = CSV.readlines(file)[0].map {|v| v.to_f.round(2)}
   end
+  
   
   def self.siggen(freq = 80000)
     fs = 195312.5 # 160 kbps sampling
@@ -64,7 +89,8 @@ class Storage
     a4 = 1
     noise = false
     
-    CSV.open("./adc.csv", "wb") do |csv|
+    file = File.join(File.expand_path("..", __FILE__), "adc.csv")  
+    CSV.open(file, "wb") do |csv|
       # puts "***#{a1} : #{f1} : #{fs}"
       data = (0...Storage::FFT_SIZE).map do |n|
         unless noise

@@ -72,9 +72,10 @@ greg.ross.visualisation.SurfacePlot.prototype.draw = function(data, options){
     var xTitle = options.xTitle;
     var yTitle = options.yTitle;
     var zTitle = options.zTitle;
+		var angle  = options.angle
     
     if (this.surfacePlot == undefined) 
-        this.surfacePlot = new greg.ross.visualisation.JSSurfacePlot(xPos, yPos, w, h, colourGradient, this.containerElement, fillPolygons, tooltips, xTitle, yTitle, zTitle);
+        this.surfacePlot = new greg.ross.visualisation.JSSurfacePlot(xPos, yPos, w, h, colourGradient, this.containerElement, fillPolygons, tooltips, xTitle, yTitle, zTitle, angle);
     
     this.surfacePlot.redraw(data);
 }
@@ -83,7 +84,7 @@ greg.ross.visualisation.SurfacePlot.prototype.draw = function(data, options){
  * This class does most of the work.
  * *********************************
  */
-greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGradient, targetElement, fillRegions, tooltips, xTitle, yTitle, zTitle){
+greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGradient, targetElement, fillRegions, tooltips, xTitle, yTitle, zTitle, angle){
     this.targetDiv;
     var id = allocateId();
     var canvas;
@@ -91,12 +92,17 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
     
     var scale = greg.ross.visualisation.JSSurfacePlot.DEFAULT_SCALE;
     
-    var currentZAngle = greg.ross.visualisation.JSSurfacePlot.DEFAULT_Z_ANGLE;
-    var currentXAngle = greg.ross.visualisation.JSSurfacePlot.DEFAULT_X_ANGLE;
-    
+		if (angle == 'top') { // hl1sqi
+    	var currentZAngle = 0;
+    	var currentXAngle = 0;			
+		} else {
+    	var currentZAngle = 30;
+    	var currentXAngle = 60;			
+    }
+		
     this.data = null;
-	var canvas_support_checked = false;
-	var canvas_supported = true;
+		var canvas_support_checked = false;
+		var canvas_supported = true;
     var data3ds = null;
     var displayValues = null;
     var numXPoints;
@@ -145,7 +151,7 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
         tTip.show(tooltips[closestPointToMouse], 200);
     }
     
-    function render(data){
+    function render(data){ 
         canvasContext.clearRect(0, 0, canvas.width, canvas.height);
         canvasContext.fillStyle = '#000';
         canvasContext.fillRect(0, 0, canvas.width, canvas.height);
@@ -154,10 +160,10 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
         var canvasWidth = width;
         var canvasHeight = height;
         
-        var minMargin = 20;
+        var minMargin = 20;  
         var drawingDim = canvasWidth - minMargin * 2;
-        var marginX = minMargin;
-        var marginY = minMargin;
+        var marginX = -50;  // hl1sqi minMargin -> -50
+        var marginY = -50;  // minMargin;
         
         transformation.init();
         transformation.rotate(currentXAngle, 0.0, currentZAngle);
@@ -231,7 +237,7 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
                 canvasContext.beginPath();
                 canvasContext.moveTo(p1.ax, p1.ay);
                 canvasContext.lineTo(p2.ax, p2.ay);
-                canvasContext.lineTo(p3.ax, p3.ay);
+                canvasContext.lineTo(p3.ax, p3.ay);  
                 canvasContext.lineTo(p4.ax, p4.ay);
                 canvasContext.lineTo(p1.ax, p1.ay);
                 
@@ -249,9 +255,9 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
     }
     
     function renderAxisText(axes){
-        var xLabelPoint = new greg.ross.visualisation.Point3D(0.0, 0.5, 0.0);
-        var yLabelPoint = new greg.ross.visualisation.Point3D(-0.5, 0.0, 0.0);
-        var zLabelPoint = new greg.ross.visualisation.Point3D(-0.5, 0.5, 0.5);
+        var xLabelPoint = new greg.ross.visualisation.Point3D(0.9, 0.5, 0.0);
+        var yLabelPoint = new greg.ross.visualisation.Point3D(-0.5, -0.5, 0.0);
+        var zLabelPoint = new greg.ross.visualisation.Point3D(-0.6, 0.5, 0.9);
         
         var transformedxLabelPoint = transformation.ChangeObjectPoint(xLabelPoint);
         var transformedyLabelPoint = transformation.ChangeObjectPoint(yLabelPoint);
@@ -311,9 +317,9 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
     
     function createAxes(){
         var axisOrigin = new greg.ross.visualisation.Point3D(-0.5, 0.5, 0);
-        var xAxisEndPoint = new greg.ross.visualisation.Point3D(0.5, 0.5, 0);
+        var xAxisEndPoint = new greg.ross.visualisation.Point3D(1.0, 0.5, 0);
         var yAxisEndPoint = new greg.ross.visualisation.Point3D(-0.5, -0.5, 0);
-        var zAxisEndPoint = new greg.ross.visualisation.Point3D(-0.5, 0.5, 1);
+        var zAxisEndPoint = new greg.ross.visualisation.Point3D(-0.5, 0.5, 1.0);
         
         var transformedAxisOrigin = transformation.ChangeObjectPoint(axisOrigin);
         var transformedXAxisEndPoint = transformation.ChangeObjectPoint(xAxisEndPoint);
@@ -436,22 +442,22 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
         var canvasWidth = width;
         var canvasHeight = height;
         
-        var minMargin = 20;
+        var minMargin = 20; 
         var drawingDim = canvasWidth - minMargin * 2;
         var marginX = minMargin;
         var marginY = minMargin;
         
-        if (canvasWidth > canvasHeight) {
-            drawingDim = canvasHeight - minMargin * 2;
-            marginX = (canvasWidth - drawingDim) / 2;
-        }
-        else 
-            if (canvasWidth < canvasHeight) {
-                drawingDim = canvasWidth - minMargin * 2;
-                marginY = (canvasHeight - drawingDim) / 2;
-            }
+        // if (canvasWidth > canvasHeight) {
+        //     drawingDim = canvasHeight - minMargin * 2;
+        //     marginX = (canvasWidth - drawingDim) / 2;
+        // }
+        // else 
+        //     if (canvasWidth < canvasHeight) {
+        //         drawingDim = canvasWidth - minMargin * 2;
+        //         marginY = (canvasHeight - drawingDim) / 2;
+        //     }
         
-        var xDivision = 1 / (numXPoints - 1);
+        var xDivision = 1.5 / (numXPoints - 1);  // hl1sqi 1 -> 1.5
         var yDivision = 1 / (numYPoints - 1);
         var xPos, yPos;
         var i, j;
@@ -498,12 +504,12 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
             this.targetDiv.style.position = 'relative';
             targetElement.appendChild(this.targetDiv);
         }
-        
         this.targetDiv.style.left = x + "px";
         this.targetDiv.style.top = y + "px";
     }
-    
-    function getInternetExplorerVersion()    // Returns the version of Internet Explorer or a -1
+
+		function getInternetExplorerVersion()    
+		// Returns the version of Internet Explorer or a -1
     // (indicating the use of another browser).
     {
         var rv = -1; // Return value assumes failure.
@@ -561,9 +567,9 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
 
         //added by edupont
         canvas.addEventListener("touchstart", mouseDownd, false);
-		canvas.addEventListener("touchmove", mouseIsMoving, false);
-		canvas.addEventListener("touchend", mouseUpd, false);
-		canvas.addEventListener("touchcancel", hideTooltip, false);
+				canvas.addEventListener("touchmove", mouseIsMoving, false);
+				canvas.addEventListener("touchend", mouseUpd, false);
+				canvas.addEventListener("touchcancel", hideTooltip, false);
     }
     
     function mouseDownd(e){
@@ -739,10 +745,7 @@ greg.ross.visualisation.JSSurfacePlot = function(x, y, width, height, colourGrad
  * between them
  */
 function distance(p1, p2){
-    return Math.sqrt(((p1.x - p2.x) *
-    (p1.x -
-    p2.x)) +
-    ((p1.y - p2.y) * (p1.y - p2.y)));
+    return Math.sqrt(((p1.x - p2.x) * (p1.x - p2.x)) + ((p1.y - p2.y) * (p1.y - p2.y)));
 }
 
 /*
@@ -920,7 +923,7 @@ greg.ross.visualisation.Polygon = function(cameraPosition, isAxis){
         xCentre /= numPoints;
         yCentre /= numPoints;
         zCentre /= numPoints;
-        
+
         this.centroid = new greg.ross.visualisation.Point3D(xCentre, yCentre, zCentre);
     }
     
@@ -1201,8 +1204,8 @@ greg.ross.visualisation.Tooltip = function(useExplicitPositions){
     }
 }
 
-greg.ross.visualisation.JSSurfacePlot.DEFAULT_X_ANGLE = 47;
-greg.ross.visualisation.JSSurfacePlot.DEFAULT_Z_ANGLE = 47;
+greg.ross.visualisation.JSSurfacePlot.DEFAULT_X_ANGLE = 0;  /* hl1sqi: 47 -> 60 */
+greg.ross.visualisation.JSSurfacePlot.DEFAULT_Z_ANGLE = 0;	 /* hl1sqi: 47 -> 30 */
 greg.ross.visualisation.JSSurfacePlot.DATA_DOT_SIZE = 3;
 greg.ross.visualisation.JSSurfacePlot.DEFAULT_SCALE = 350;
 greg.ross.visualisation.JSSurfacePlot.MIN_SCALE = 50;

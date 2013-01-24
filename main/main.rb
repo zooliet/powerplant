@@ -38,6 +38,7 @@ EventMachine.run do     # <-- Changed EM to EventMachine
         :average  => Storage::average, 
         :current  => Storage::current 
       }
+      # puts("#{data.inspect}")
       $ws.send(data.to_json)
     end
     
@@ -53,8 +54,8 @@ EventMachine.run do     # <-- Changed EM to EventMachine
         Storage.reset
         $timer = EM.add_periodic_timer(5) do # $timer = EM.add_timer(5) do 
           puts Time.now          
-          EM.defer(storage_sampling, fft) 
-          # EM.defer(adc_sampling, fft)
+          # EM.defer(storage_sampling, fft) 
+          EM.defer(adc_sampling, fft)
           content_type "text/javascript"
           body "console.log('test.js')"
         end
@@ -107,9 +108,32 @@ EventMachine.run do     # <-- Changed EM to EventMachine
         $timer = nil
   	  end
       content_type :json
-      { :key => 'value', :key2 => 'value2' }.to_json    
+      file_5_sec = File.join(File.expand_path("..", __FILE__), "history_5_sec.csv") 
+      file_1_min = File.join(File.expand_path("..", __FILE__), "history_1_min.csv") 
+      file_1_hour = File.join(File.expand_path("..", __FILE__), "history_1_hour.csv") 
+      # [[1,2,3,4],[5,6,7,8]].to_json
+      # [['1','2','3','4'],['5','6','7','8']].to_json
+      # { :key => 'value', :key2 => 'value2' }.to_json    
+      if File.exist?(file_1_hour)
+        CSV.readlines(file_1_hour).to_json         
+      elsif File.exist?(file_1_min) and CSV.readlines(file_1_min).size >= 2
+        CSV.readlines(file_1_min).to_json 
+      else
+        CSV.readlines(file_5_sec).to_json 
+        # 0.upto(1).map {0.upto(1023).map {|e| e % 16}}.to_json
+      end
     end
     
+    get "/audio_start.js" do
+      content_type "text/javascript"
+      coffee :audio_start      
+    end
+    
+    get "/audio_stop.js" do
+      content_type "text/javascript"
+      coffee :audio_stop      
+    end
+       
     get "/coffee_test.js" do
       content_type "text/javascript"
       coffee :coffee_test
@@ -120,7 +144,6 @@ EventMachine.run do     # <-- Changed EM to EventMachine
       { :key => 'value', :key2 => 'value2' }.to_json
     end
     
-  
     private
     def local_ip
       orig, Socket.do_not_reverse_lookup = Socket.do_not_reverse_lookup, true

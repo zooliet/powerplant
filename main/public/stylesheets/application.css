@@ -44,6 +44,36 @@ div#graph {
 	margin: 0 auto;	
 }
 
+div#audio {
+	width: 80%;
+	margin: 20px auto;		
+	text-align: center;
+	font-size: 12px;
+}
+
+div#slider {
+}
+
+div#spectrogram {
+	margin: 10px auto;
+	text-align: center;
+	border: 1px solid none;
+}
+
+div#angle {
+	margin: 0px auto;
+	text-align: center;
+	color: black;
+	font-size: 14px;
+	display: none;
+}
+
+div#angle a{
+	color: black;
+	font-size: 14px;
+}
+
+
 div#controls {
 	margin: 30px auto;
 /*	margin: 0px 0px 0px 500px;*/
@@ -118,3 +148,4 @@ div#siggen table tr:hover {
 	color: black;
 	background-color: yellow;	
 }
+

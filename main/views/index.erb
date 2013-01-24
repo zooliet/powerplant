@@ -3,6 +3,10 @@
 <div class="ui-widget ui-corner-all">
 	<div class="ui-widget-content ui-corner-bottom" >
 		<div id="graph"></div>
+		<div id="audio">
+			<div id="slider"></div>
+			<p id="frequency" style="color: #f6931f; font-weight: bold;" onclick=""></p>
+		</div>	
 	</div>
 </div>	
 
@@ -12,10 +16,16 @@
 		<li data-ref="/stop" onclick="">Stop</li>
 		<li data-ref="/calibration" onclick="">Calibration</li>
 		<li data-ref="/spectrogram" onclick="">Spectrogram</li>
+		<li data-ref="/audio_start" onclick="">Sound Off</li>
 	</ul>
 </div>
 
-<div id="hostip" data-hostip="<%= @host_ip %>"/>
+<div id="hostip" data-hostip="<%= @host_ip %>"></div>
 	
 <div id='spectrogram'></div>
-	
+<div id='angle'>
+	<a href="#" id="top">Top</a> |
+	<a href="#" id="perspective">Perspective</a>		
+</div>	
+
+
