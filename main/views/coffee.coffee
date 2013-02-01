@@ -25,7 +25,7 @@ jQuery ->
 			j = 0
 			while j < numCols
 				value = result[j][i]
-				data.setValue i, j, value / 50.0
+				data.setValue i, j, value / 200.0
 				tooltipStrings[idx] = value + " at " + (Math.round(i * 190.73486328125)) + " Hz" 
 				idx++
 				j++
@@ -254,17 +254,18 @@ jQuery ->
 				success: (result) ->
 					data = []
 					for k,v of result
-						# console.log(k + " is " + v)
-						data.push(v)
+						console.log(k + " is " + v)
+						# data.push(v)
 					$('div#spectrogram').empty()
 					$('#spectrogram').show()
 					$('#angle').show()
-					# data = []
-					# for j in [0...60]
-					# 	temp = []
-					# 	for i in [0...500]
-					# 		temp.push(Math.floor(Math.random() * 30) + 1)
-					# 	data.push(temp)
+					data = []
+					for j in [0...60]
+						temp = []
+						for i in [0...500]
+							temp.push(Math.floor(j))
+							# temp.push(Math.floor(Math.random() * 60) + 1)
+						data.push(temp)
 					spectrogram(data, 'normal')
 					spectral_data = data
 						

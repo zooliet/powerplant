@@ -71,7 +71,7 @@ class Storage
   end
   
   def self.sampling
-    self.siggen(70000+rand(20000))
+    # self.siggen(70000+rand(20000))
     file = File.join(File.expand_path("..", __FILE__), "adc.csv")  
     Storage::sampled = CSV.readlines(file)[0].map {|v| v.to_f.round(2)}
   end
@@ -80,13 +80,13 @@ class Storage
   def self.siggen(freq = 80000)
     fs = 195312.5 # 160 kbps sampling
     f1 = 20000 # 20 khz
-    a1 = 1
+    a1 = 30
     f2 = 40000 # 40 khz
-    a2 = 1
+    a2 = 30
     f3 = 60000 # 60 khz
-    a3 = 1
+    a3 = 30
     f4 = freq
-    a4 = 1
+    a4 = 30
     noise = false
     
     file = File.join(File.expand_path("..", __FILE__), "adc.csv")  
