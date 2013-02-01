@@ -42,6 +42,28 @@ EventMachine.run do     # <-- Changed EM to EventMachine
       $ws.send(data.to_json)
     end
     
+    fft_only = lambda do |data|
+      fm = ARM::FFTW.fft(data).to_a.map do |f|
+        power =  ((f.real**2 + f.imaginary**2)**0.5).round(2)
+        power_in_log = 10 * Math.log10(power)
+        power_in_log = 0.0 if power_in_log.infinite?
+        power_in_log.round(2).abs        
+      end
+    end
+    
+    test_count = 0;
+    t = EM.add_periodic_timer(0.1) do 
+      test_count += 1
+      EM.defer(storage_sampling, fft_only) 
+      if test_count == 50
+        print "+"
+        test_count = 0
+        # EM.cancel_timer(t)
+      end
+        
+    end
+
+
     get "/" do
       @host_ip = local_ip 
       erb :index
