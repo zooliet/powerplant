@@ -25,7 +25,7 @@ jQuery ->
 			j = 0
 			while j < numCols
 				value = result[j][i]
-				data.setValue i, j, value / 200.0
+				data.setValue i, j, value / 100.0
 				tooltipStrings[idx] = value + " at " + (Math.round(i * 190.73486328125)) + " Hz" 
 				idx++
 				j++
@@ -45,7 +45,7 @@ jQuery ->
 		# Axis labels.
 		xAxisHeader = "Freq"
 		yAxisHeader = "Time"
-		zAxisHeader = "dB"
+		zAxisHeader = "dBm"
 		options =
 			xPos: 0
 			yPos: 0
@@ -82,9 +82,9 @@ jQuery ->
 
 	plot =
 		current: 
-			a = ( 0 for i in [1...1024])
+			a = ( -30 for i in [1...1024])
 		average: 
-			a = ( 0 for i in [1...1024])
+			a = ( -30 for i in [1...1024])
 
 		picks: (bins, interval) ->
 			ret = []
@@ -104,7 +104,7 @@ jQuery ->
 			average_ret  = @.picks(average, interval)			
 						
 			$.jqplot 'graph', [average_ret, current_ret],
-				seriesColors: ["rgba(78, 135, 194, 0.7)", "rgb(211, 235, 59)"] # seriesColors: [ "#c5b47f"]
+				seriesColors: ["rgba(78, 135, 194, 0.7)", "rgb(211, 0, 0)"] # rgb(211, 235, 59) seriesColors: [ "#c5b47f"]
 				# seriesColors: ["rgba(78, 135, 194, 0.7)"]
 				
 				title: "Ultra-Acoustic Spectrum"
@@ -158,11 +158,11 @@ jQuery ->
 						rendererOptions:
 							minorTicks: 1
 						tickOptions:
-							formatString: "%d dB"
+							formatString: "%d dBm"
 							# formatString:'%.1f'
 							showMark: false
-						min: 0
-						max: 100
+						min: -30
+						max: 60
 						tickInterval: 10
 						# autoscale: true 						
 				grid: 
@@ -180,6 +180,9 @@ jQuery ->
 					useAxesFormatters: false
 				cursor:
 					show: true
+					zoom:	true
+					showTooltip: false
+					     
 	
 ########################################################################################
 
@@ -202,9 +205,9 @@ jQuery ->
 		if window.audio.flag
 			freq_index = $( "#slider" ).slider( "value" )
 			mags = []
-			mags.push(result.current[freq_index + i]) for i in [-1, 0, 1]
+			mags.push(Math.round(result.current[freq_index + i])) for i in [-1..1]
 			console.log(mags.join(", "))
-			window.audio.start(mags = [0.1, 0.1, 0.1])
+			window.audio.start(mags)
 								
 	ws.onclose = ->
 		# alert("Socket closed")
@@ -238,12 +241,14 @@ jQuery ->
 				url: url			
 
 			value = $(@).text()
-			if value is 'Sound Off'
-				$(@).text("Sound On")
+			if value is 'Sound On'
+				$(@).text("Sound Off")
 				$(@).data('ref', '/audio_stop')
 			else
-				$(@).text("Sound Off")
+				$(@).text("Sound On")
 				$(@).data('ref', '/audio_start')
+		else if url is '/reset_zoom'
+			gplot.resetZoom()
 		else
 			url = "#{url}.json"
 			type = 'json'
@@ -255,17 +260,17 @@ jQuery ->
 					data = []
 					for k,v of result
 						console.log(k + " is " + v)
-						# data.push(v)
+						data.push(v)
 					$('div#spectrogram').empty()
 					$('#spectrogram').show()
 					$('#angle').show()
-					data = []
-					for j in [0...60]
-						temp = []
-						for i in [0...500]
-							temp.push(Math.floor(j))
-							# temp.push(Math.floor(Math.random() * 60) + 1)
-						data.push(temp)
+					# data = []
+					# for j in [0...60]
+					# 	temp = []
+					# 	for i in [0...500]
+					# 		temp.push(Math.floor(j))
+					# 		# temp.push(Math.floor(Math.random() * 60) + 1)
+					# 	data.push(temp)
 					spectrogram(data, 'normal')
 					spectral_data = data
 						
@@ -325,7 +330,6 @@ class Audio
 		console.log(@node)
 
 	start: (mags)->
-		freq_index = $( "#slider" ).slider( "value" )
 		# Set up the per-sample phase increment based on the desired 
 		# sine tone frequency and the sample rate of the audio context.
 		# freqs = [523.25, 587.33, 659.26, 698.46, 784.00, 888.00, 987.6, 1046.5]
@@ -333,14 +337,14 @@ class Audio
 		# inc   = []
 
 
-		# freqs = [523.25, 587.33, 659.26, 698.46, 784.00, 888.00, 987.6, 1046.5]
-		freqs = [523.25, 587.33, 659.26]
+		# freqs = [523.25, 587.33, 659.26, 698.46, 784.00, 888.00, 987.6, 1046.5, 1046.5, 1046.5, 1046.5]
+		freqs = [784.00, 888.00, 987.6]
 
-		phase = [0.0,    0.0,    0.0]
+		phase = [0.0, 0.0, 0.0]
 		inc   = []
 
 		# freqs = []
-		# freqs.push = Math.round((freq_index + i) * 190.73486328125) for i in [-1, 0, 1]
+		# freqs.push = Math.round((20 + i) * 190.73486328125) for i in [-5..5]
 
 		for freq in freqs
 			inc.push(2 * Math.PI * freq / @context.sampleRate)
@@ -354,7 +358,8 @@ class Audio
 			for i in [0...numSamples]
 				val = 0
 				for j in [0...3]
-					val += mags[j] * Math.sin(phase[j])
+					mag = if mags[j] < 0 then 0 else mags[j]
+					val += mag * 0.001 * Math.sin(phase[j])
 					phase[j] += inc[j]
 				left[i] = val
 				right[i] = val
@@ -365,8 +370,6 @@ class Audio
 		@node.disconnect(@context.destination);
 
 window.audio = new Audio()
-
-########################################################################################	
 
 ########################################################################################	
 
