@@ -1,25 +1,63 @@
 
 
-<div class="ui-widget ui-corner-all">
-	<div class="ui-widget-content ui-corner-bottom" >
+<!-- <div class="ui-widget ui-corner-all">
+	<div class="ui-widget-content ui-corner-bottom" > -->
 		<div id="graph"></div>
 		<div id="audio">
 			<div id="slider"></div>
 			<p id="frequency" style="color: #f6931f; font-weight: bold;" onclick=""></p>
 		</div>	
-	</div>
-</div>	
+	<!-- </div>
+</div>	 -->
 
 <div id="controls">
 	<ul class="buttons">
 		<li data-ref="/start" onclick="">Start</li>
 		<li data-ref="/stop" onclick="">Stop</li>
-		<li data-ref="/calibration" onclick="">Calibration</li>
-		<li data-ref="/spectrogram" onclick="">Spectrogram</li>
-		<li data-ref="/audio_start" onclick="">Sound On</li>
-		<li data-ref="/reset_zoom" onclick="">Reset Zoom</li>
 	</ul>
+	
+	<!-- <ul class="buttons">
+		<li data-ref="/calibration" onclick="">Calibration</li>
+		<li data-ref="/spectrogram" onclick="">Spectrogram</li>	
+	</ul> -->	
 </div>
+
+<div id="options">
+	<table>
+		<tr>
+			<td class="title">Range</td>
+			<td class="value">
+				<input type="text" id="range_start" value="0" onclick=""/> -
+				<input type="text" id="range_stop" value="95" onclick=""/> KHz
+				<a id="apply_range" href="">Apply</li>
+				<a id="reset_range" href="">Reset</li>
+			</td>			
+		</tr>
+		<tr>
+			<td class="title">Vertical Span</td>
+			<td class="value">
+				<input type="radio" name="vspan" value="full" id="vspan_full" onclick="" checked="1"/> 
+				<label for="vspan_full">Full</label>
+				<input type="radio" name="vspan" value="auto" id="vspan_auto" onclick=""/> 
+				<label for="vspan_auto">Auto</label>
+				<input type="radio" name="vspan" value="manual" id="vspan_manual" onclick=""/> 
+				<label for="vspan_manual" id="manual_label">Manual</label>
+				<input type="text" id="vspan_text" value="20" onclick=""/> dBm
+			</td>
+		</tr>
+		<tr>
+			<td class="title">Sound</td>
+			<td class="value">
+				<input type="radio" name="sound" value="on" id="sound_on" onclick=""/> 
+				<label for="sound_on">Sound On</label>
+				<input type="radio" name="sound" value="off" id="sound_off" onclick="" checked="1"/> 
+				<label for="sound_off">Sound Off</label>
+			</td>
+		</tr>
+	</table>
+</div>
+
+
 
 <div id="hostip" data-hostip="<%= @host_ip %>"></div>
 	

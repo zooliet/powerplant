@@ -66,17 +66,21 @@ jQuery ->
 	
 ########################################################################################	
 	
-	$("#slider").slider
-		value:255
-		min: 1
-		max: 500
+	slider = $("#slider").slider
+		value: 48  #255
+		min: 0  #1
+		max: 95 #500
 		step: 1
 		slide: (event, ui ) ->
-			value = Math.round(parseInt(ui.value) * 190.73486328125)
-			$("#frequency").html(value + " Hz")
+			# value = Math.round(parseInt(ui.value) * 190.73486328125)
+			# value = ui.value * 1000
+			value = ui.value
+			$("#frequency").html("#{value} KHz")
 	
-	value = Math.round(255 * 190.73486328125)
-	$("#frequency").html(value + " Hz")
+	# value = Math.round(255 * 190.73486328125)	
+	value = 48
+	$("#frequency").html("#{value} KHz")
+
 
 ########################################################################################										
 
@@ -85,6 +89,10 @@ jQuery ->
 			a = ( -30 for i in [1...1024])
 		average: 
 			a = ( -30 for i in [1...1024])
+		min: -30
+		max: 70
+		f_start: 0
+		f_stop: 95000
 
 		picks: (bins, interval) ->
 			ret = []
@@ -99,7 +107,7 @@ jQuery ->
 					accumulator = accumulator + value
 			ret
 							
-		start: (average=@average, current = @current, interval = 1) ->
+		start: (average=@average, current=@current, start=@f_start, stop=@f_stop, min=@min, max=@max, interval=1) ->
 			current_ret  = @.picks(current, interval)	
 			average_ret  = @.picks(average, interval)			
 						
@@ -137,8 +145,8 @@ jQuery ->
 						drawBaseline: false
 				axes:
 					xaxis:
-						min: 0			# min: current_ret[0][0]
-						max: 95000  # max: current_ret[current_ret.length-1][0]
+						min: start			
+						max: stop  
 						# renderer: $.jqplot.CategoryAxisRenderer
 						drawMajorGridlines: true
 						showTicks: true
@@ -161,8 +169,8 @@ jQuery ->
 							formatString: "%d dBm"
 							# formatString:'%.1f'
 							showMark: false
-						min: -30
-						max: 60
+						min: min
+						max: max
 						tickInterval: 10
 						# autoscale: true 						
 				grid: 
@@ -186,8 +194,18 @@ jQuery ->
 	
 ########################################################################################
 
-	# plot.click_binding()
+	# plot.click_binding()	
 	gplot = plot.start()
+
+########################################################################################
+	
+	w = $('canvas:last').css('width')
+	c = parseInt(w)/2
+	p = $('canvas:last').position()
+	
+	$("div#slider").css('width': w);
+	$("div#slider").css('left': "#{p.left}px");
+	$("p#frequency").css('left': "#{p.left+c-10}px");
 
 ########################################################################################
 
@@ -200,14 +218,21 @@ jQuery ->
 		# for k,v of result
 		# 	console.log(k + " is " + v)
 		gplot.destroy()
+		# start =
+		# stop  =
+		# min   =
+		# max   = 
+		# gplot = plot.start(result.average, result.current, start, stop, min, max)
 		gplot = plot.start(result.average, result.current)
 		gplot.replot()
+			
 		if window.audio.flag
-			freq_index = $( "#slider" ).slider( "value" )
+			freq_in_khz = $("#slider").slider( "value" )
+			freq_index = Math.round((freq_in_khz * 1000) / 190.73486328125 )
 			mags = []
 			mags.push(Math.round(result.current[freq_index + i])) for i in [-1..1]
 			console.log(mags.join(", "))
-			window.audio.start(mags)
+			window.audio.start(mags)		
 								
 	ws.onclose = ->
 		# alert("Socket closed")
@@ -232,23 +257,6 @@ jQuery ->
 			$('div#controls ul.buttons li.active').removeClass('active')
 			$(@).addClass('active')
 			
-		else if url is '/audio_start' or url is '/audio_stop'
-			url = "#{url}.js"
-			type = 'script'
-			$.ajax
-				type: 'GET'
-				dataType: type
-				url: url			
-
-			value = $(@).text()
-			if value is 'Sound On'
-				$(@).text("Sound Off")
-				$(@).data('ref', '/audio_stop')
-			else
-				$(@).text("Sound On")
-				$(@).data('ref', '/audio_start')
-		else if url is '/reset_zoom'
-			gplot.resetZoom()
 		else
 			url = "#{url}.json"
 			type = 'json'
@@ -276,8 +284,51 @@ jQuery ->
 						
 			$('div#controls ul.buttons li.active').removeClass('active')
 			$(@).addClass('active')
-					
-	
+
+########################################################################################					
+	$('input[name=sound]:radio').change ->
+		# alert("#{@value}")
+		if @value is "on"
+			window.audio.flag = true
+		else
+			window.audio.flag = false
+			window.audio.stop()
+
+	$('input[name=vspan]:radio').change ->
+		# alert("#{@value}")
+		if @value is "full"
+			plot.min = -30
+			plot.max = 70
+		else
+			plot.min = null
+			plot.max = null
+
+	$('a#reset_range').click (e) ->
+		e.preventDefault()
+		# gplot.resetZoom()
+		$("input#range_start").val("0")
+		$("input#range_stop").val("95")
+		plot.f_start = 0
+		plot.f_stop  = 95000
+		$("#slider").slider
+			value: 48
+			min: 0
+			max: 95
+		$("#frequency").html("48 KHz")		
+
+	$('a#apply_range').click (e) ->
+		e.preventDefault()
+		f_start = parseInt($("input#range_start").val())
+		f_stop  = parseInt($("input#range_stop").val())
+		plot.f_start = f_start * 1000
+		plot.f_stop  = f_stop * 1000
+		$("#slider").slider
+			value: Math.round((f_start + f_stop)/2)
+			min: f_start
+			max: f_stop
+		$("#frequency").html("#{Math.round((f_start + f_stop)/2)} KHz")		
+
+												
 ########################################################################################	
 	$("div#angle a").live "click", (e) ->
 		$('div#spectrogram').empty()
