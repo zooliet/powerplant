@@ -1,4 +1,4 @@
-source "http://rubygems.org"
+source "https://rubygems.org"
 
 gem 'thor'
 
@@ -22,4 +22,5 @@ path = `rvm current`; path[-1] = ""
 gem 'arm_fftw', '=0.0.1', :path => "~/.rvm/gems/#{path}/gems/arm_fftw-0.0.1/"
 gem 'pv_adc', '=0.0.1', :path => "~/.rvm/gems/#{path}/gems/pv_adc-0.0.1/"
 
+gem 'activesupport'
 

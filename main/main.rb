@@ -4,6 +4,7 @@ require 'socket'
 
 require 'coffee-script'
 require 'json'
+require 'active_support/all'
 
 require 'arm_fftw'
 require 'pv_adc'
@@ -79,12 +80,15 @@ EventMachine.run do
     end
 
     EM.add_periodic_timer(0.5) do 
-      EM.defer(storage_sampling, fft_only) 
-      # EM.defer(adc_sampling, fft_only)
+      # EM.defer(storage_sampling, fft_only) 
+      EM.defer(adc_sampling, fft_only)
     end
 
     get "/" do
       @host_ip = local_ip 
+      if @host_ip == '127.0.0.1'
+        @host_ip = '10.10.0.1'
+      puts "****IP: #{@host_ip}"
       erb :index
     end
 
