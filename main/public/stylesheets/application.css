@@ -15,7 +15,7 @@ div#content {
 }
 
 div#main {
-	min-height: 500px;
+/*	min-height: 500px;*/
 	padding: 10px;
 }
 
@@ -24,7 +24,7 @@ div#footer {
 /*	bottom: 0px;*/
 	width: 100%;
 	height: 24px;
-	margin-top: 30px;
+/*	margin-top: 30px;*/
 	padding-top: 5px;
 	color: #444;
 	text-align: center;
@@ -77,9 +77,9 @@ ul.buttons {
 
 ul.buttons li {
 	display: inline-block;
-	width: 120px;
+	width: 100px;
 	height: 24px;
-	margin-left: 80px;
+	margin: 0 40px 0 20px;
 	padding: 10px 5px;
 	color: #f2f2f2;
 	background-color: #999;
@@ -100,8 +100,8 @@ ul.buttons li:hover {
 /********************************/
 div#options {
 	width: 70%;
-	min-height: 200px;
-	margin: 20px auto;
+/*	min-height: 200px;*/
+	margin: 10px auto;
 	text-align: center;
 /*
 	border: 1px solid gray;
@@ -137,7 +137,7 @@ div#options table td.value{
 
 div#options table tr label{
 	display: inline-block;
-	width: 150px;
+	width: 100px;
 }
 
 div#options table tr label#manual_label{

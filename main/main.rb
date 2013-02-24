@@ -4,7 +4,7 @@ require 'socket'
 
 require 'coffee-script'
 require 'json'
-require 'active_support/all'
+# require 'active_support/all'
 
 require 'arm_fftw'
 require 'pv_adc'

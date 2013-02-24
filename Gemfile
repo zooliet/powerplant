@@ -14,7 +14,7 @@ gem 'coffee-script'
 gem 'json'
 
 gem 'em-redis'
-gem 'em-websocket'
+gem 'em-websocket', '= 0.3.8'  # 0.4.0 does not work in armhf env
 #gem 'websocket-rack', :require => 'rack/websocket'
 
 
@@ -22,5 +22,5 @@ path = `rvm current`; path[-1] = ""
 gem 'arm_fftw', '=0.0.1', :path => "~/.rvm/gems/#{path}/gems/arm_fftw-0.0.1/"
 gem 'pv_adc', '=0.0.1', :path => "~/.rvm/gems/#{path}/gems/pv_adc-0.0.1/"
 
-gem 'activesupport'
+# gem 'activesupport'
 
