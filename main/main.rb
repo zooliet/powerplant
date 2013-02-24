@@ -88,6 +88,7 @@ EventMachine.run do
       @host_ip = local_ip 
       if @host_ip == '127.0.0.1'
         @host_ip = '10.10.0.1'
+      end
       puts "****IP: #{@host_ip}"
       erb :index
     end
