@@ -3,5 +3,7 @@ log/*.log
 tmp/
 .DS_Store
 **/*.csv
+Gemfile.lock
+main/adc.csv
 
 

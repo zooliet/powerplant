@@ -97,7 +97,7 @@ EventMachine.run do
         puts "Skip timer"
       else
         Storage.reset
-        $timer = EM.add_periodic_timer(3) do # $timer = EM.add_timer(5) do 
+        $timer = EM.add_periodic_timer(2) do # $timer = EM.add_timer(5) do 
           puts Time.now          
           # EM.defer(storage_sampling, fft) 
           # EM.defer(adc_sampling, fft)
